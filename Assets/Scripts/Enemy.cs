@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Player player = other.transform.GetComponent<Player>();
+            Player player = other.GetComponent<Player>();
             if (player != null)
             {
                 player.Damage();
@@ -45,3 +45,4 @@ public class Enemy : MonoBehaviour
         }
     }
 }
+
