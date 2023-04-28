@@ -7,13 +7,21 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 3.5f;
     [SerializeField]
+    private float _speedMultiplier = 2f;
+    [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _laserTrippleShotPrefab;
     [SerializeField]
     private float _cooldownTime = 0.15f; 
     private float _canFireAgain = -1f;
     [SerializeField]
     private int _lives = 3;
     private SpawnManager _spawnManager;
+    [SerializeField]
+    private bool _isTrippleShotActive = false;
+    [SerializeField]
+    private bool _isSpeedActive = false;
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +52,7 @@ public class Player : MonoBehaviour
         Vector3 playerMovement = new Vector3(horizontalInput, verticalInput, 0) * _speed * Time.deltaTime;
 
         transform.Translate(playerMovement);
-        
+  
         // restrict x position
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, -9.2f, 9.2f), transform.position.y, 0);
 
@@ -55,7 +63,14 @@ public class Player : MonoBehaviour
     void FireLaser()
     {
         _canFireAgain = Time.time + _cooldownTime;
-        Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+        if (_isTrippleShotActive)
+        {
+            Instantiate(_laserTrippleShotPrefab, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+        }
     }
 
     public void Damage()
@@ -67,8 +82,38 @@ public class Player : MonoBehaviour
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
-
     }
 
+    public void TrippleShotActive()
+    {
+        if (!_isTrippleShotActive) // prevent more than one tripple shoot powerup at the same time
+        {
+            _isTrippleShotActive = true;
+            StartCoroutine(TrippleShotCoolDown());
+        }
+    }
+
+    IEnumerator TrippleShotCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _isTrippleShotActive = false;
+    }
+
+    public void SpeedActive()
+    {
+        if (!_isSpeedActive) // prevent more than one speed powerup at the same time
+        {
+            _isSpeedActive = true;
+            _speed *= _speedMultiplier;
+            StartCoroutine(SpeedCoolDown());
+        }
+    }
+
+    IEnumerator SpeedCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _speed /= _speedMultiplier;
+        _isSpeedActive = false;
+    }
 }
 
