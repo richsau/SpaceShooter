@@ -37,7 +37,7 @@ public class SpawnManager : MonoBehaviour
     {
         while (_stopSpawning == false)
         {
-            _powerUpType = Random.Range(0, 2);
+            _powerUpType = Random.Range(0, 3);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
             Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);

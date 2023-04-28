@@ -40,7 +40,7 @@ public class PowerUp : MonoBehaviour
                         player.SpeedActive();
                         break;
                     case 2: // Shield
-                        Debug.Log("TBI - Shield PowerUp");
+                        player.ShieldActive();
                         break;
                     default:
                         Debug.Log("Invalid PowerUp");
