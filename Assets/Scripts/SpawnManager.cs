@@ -9,21 +9,16 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyContainer;
     [SerializeField]
+    private GameObject _astroidPrefab;
+    [SerializeField]
     private GameObject[] _powerupPrefabs;
-
     private int _powerUpType;
-    private bool _stopSpawning = false;
+    private bool _okToSpawn = false;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        StartCoroutine(SpawnEnemy());
-        StartCoroutine(SpwanPowerUp());
-    }
-
     IEnumerator SpawnEnemy()
     {
-        while( _stopSpawning == false )
+        yield return new WaitForSeconds(3.0f);
+        while (_okToSpawn == true)
         {
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
@@ -35,7 +30,8 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpwanPowerUp()
     {
-        while (_stopSpawning == false)
+        yield return new WaitForSeconds(Random.Range(5, 11));
+        while (_okToSpawn == true)
         {
             _powerUpType = Random.Range(0, 3);
             float randomX = Random.Range(-8.5f, 8.5f);
@@ -45,9 +41,29 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    IEnumerator SpawnAstroid()
+    {
+        yield return new WaitForSeconds(3.0f);
+        while (_okToSpawn == true)
+        {
+            float randomX = Random.Range(-8.5f, 8.5f);
+            Vector3 astroidSpawnLocation = new Vector3(randomX, 7.5f, 0);
+            Instantiate(_astroidPrefab, astroidSpawnLocation, Quaternion.identity);
+            yield return new WaitForSeconds(5f);
+        }
+    }
+
     public void StopSpawning()
     {
-        _stopSpawning = true;
+        _okToSpawn = false;
+    }
+
+    public void StartSpawning()
+    {
+        _okToSpawn = true;
+        StartCoroutine(SpawnEnemy());
+        StartCoroutine(SpwanPowerUp());
+        StartCoroutine(SpawnAstroid());
     }
 }
 

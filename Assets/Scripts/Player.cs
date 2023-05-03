@@ -29,14 +29,19 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _score = 0;
     private UIManager _uiManager;
+    private bool _leftWingOnFire = false;
+    //private bool _rightWingOnFire = false;
+    [SerializeField]
+    private GameObject _leftWingFire;
+    [SerializeField]
+    private GameObject _rightWingFire;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        //make the current position = new position(0, -3.9, 0)
         transform.position = new Vector3(0, -3.9f, 0);
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is null.");
@@ -96,11 +101,39 @@ public class Player : MonoBehaviour
         }
         
         _lives--;
-        _uiManager.UpdateLives(_lives);
-        if (_lives < 1)
+
+        switch (_lives)
         {
-            _spawnManager.StopSpawning();
-            Destroy(this.gameObject);
+            case 2:
+                if (Random.Range(0, 2) == 0) // randomly pick left or right side first
+                {
+                    _leftWingOnFire = true;
+                    _leftWingFire.SetActive(true);
+                }
+                else
+                {
+                    _rightWingFire.SetActive(true);
+                }
+                break;
+            case 1:
+                if (_leftWingOnFire)
+                {
+                    _rightWingFire.SetActive(true);
+                }
+                else
+                {
+                    _leftWingOnFire = true;
+                    _leftWingFire.SetActive(true);
+                }
+                break;
+            case 0:
+                _spawnManager.StopSpawning();
+                Destroy(this.gameObject);
+                _uiManager.DisplayGameOver();
+                break;
+            default:
+                Debug.LogError("Unexpected lives count in Player");
+                break;
         }
     }
 

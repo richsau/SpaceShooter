@@ -8,8 +8,6 @@ public class PowerUp : MonoBehaviour
     private float _speed = 8.0f;
     [SerializeField]
     private int powerUpID; // 0 = TrippleShot, 1 = Speed, 2 = Shield
-    
-
 
     // Update is called once per frame
     void Update()
@@ -43,7 +41,7 @@ public class PowerUp : MonoBehaviour
                         player.ShieldActive();
                         break;
                     default:
-                        Debug.Log("Invalid PowerUp");
+                        Debug.LogError("Unexpected PowerUp value in PowerUp.");
                         break;
                 }
             }

@@ -6,12 +6,21 @@ public class Enemy : MonoBehaviour
 {
     private float _enemySpeed = 4.0f;
     private Player _player;
+    private Animator _enemyDeathAnim;
 
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null)
+        {
+            Debug.LogError("Player can't be found in Enemy.");
+        }
+        _enemyDeathAnim = GetComponent<Animator>();
+        if (_enemyDeathAnim == null)
+        {
+            Debug.LogError("Animator can't be found in Enemy.");
+        }
     }
-
 
     // Update is called once per frame
     void Update()
@@ -36,7 +45,7 @@ public class Enemy : MonoBehaviour
             {
                 player.Damage();
             }
-            Destroy(this.gameObject);
+            DestroyEnemy();
         }
 
         if (other.tag == "Laser")
@@ -46,8 +55,15 @@ public class Enemy : MonoBehaviour
             {
                 _player.AddToScore(10);
             }
-            Destroy(this.gameObject);
+            DestroyEnemy();
         }
+    }
+
+    public void DestroyEnemy()
+    {
+        _enemyDeathAnim.SetTrigger("OnEnemyDeath");
+        _enemySpeed = 0; 
+        Destroy(this.gameObject, 2.8f);
     }
 }
 

@@ -9,6 +9,7 @@ TagManager:
   - TrippleShotPowerUp
   - SpeedPowerUp
   - ShieldPowerUp
+  - Astroid
   layers:
   - Default
   - TransparentFX
