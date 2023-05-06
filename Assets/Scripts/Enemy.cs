@@ -7,18 +7,24 @@ public class Enemy : MonoBehaviour
     private float _enemySpeed = 4.0f;
     private Player _player;
     private Animator _enemyDeathAnim;
+    private AudioSource _audioSource;
 
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null)
         {
-            Debug.LogError("Player can't be found in Enemy.");
+            Debug.LogError("Player could not be found in Enemy.");
         }
         _enemyDeathAnim = GetComponent<Animator>();
         if (_enemyDeathAnim == null)
         {
-            Debug.LogError("Animator can't be found in Enemy.");
+            Debug.LogError("Animator could not be found in Enemy.");
+        }
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("AudioSource could not be found in Enemy.");
         }
     }
 
@@ -62,7 +68,9 @@ public class Enemy : MonoBehaviour
     public void DestroyEnemy()
     {
         _enemyDeathAnim.SetTrigger("OnEnemyDeath");
-        _enemySpeed = 0; 
+        _audioSource.Play();
+        _enemySpeed = 0;
+        Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
         Destroy(this.gameObject, 2.8f);
     }
 }

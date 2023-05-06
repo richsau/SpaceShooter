@@ -35,6 +35,9 @@ public class Player : MonoBehaviour
     private GameObject _leftWingFire;
     [SerializeField]
     private GameObject _rightWingFire;
+    [SerializeField]
+    private AudioClip _laserAudioClip;
+    private AudioSource _audioSource;
 
 
     // Start is called before the first frame update
@@ -46,6 +49,16 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("The Spawn Manager is null.");
         }
+
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("AudioSource could not be found in Player.");
+        } else
+        {
+            _audioSource.clip = _laserAudioClip;
+        }
+
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
@@ -89,8 +102,24 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
+        _audioSource.Play();
     }
 
+    public void DamageToKill()
+    {
+        if (_isShieldActive)
+        {
+            _shieldVisual.SetActive(false);
+            _isShieldActive = false;
+        }
+        else
+        {
+            _spawnManager.StopSpawning();
+            Destroy(this.gameObject);
+            _uiManager.DisplayGameOver();
+        }
+    }
+    
     public void Damage()
     {
         if (_isShieldActive)
@@ -101,6 +130,7 @@ public class Player : MonoBehaviour
         }
         
         _lives--;
+        _uiManager.UpdateLives(_lives);
 
         switch (_lives)
         {
@@ -132,7 +162,7 @@ public class Player : MonoBehaviour
                 _uiManager.DisplayGameOver();
                 break;
             default:
-                Debug.LogError("Unexpected lives count in Player");
+                Debug.LogError("Unexpected lives count in Player.");
                 break;
         }
     }

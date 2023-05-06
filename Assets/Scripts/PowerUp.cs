@@ -8,8 +8,24 @@ public class PowerUp : MonoBehaviour
     private float _speed = 8.0f;
     [SerializeField]
     private int powerUpID; // 0 = TrippleShot, 1 = Speed, 2 = Shield
+    private AudioSource _audioSource;
+    private SpriteRenderer _spriteRenderer;
 
-    // Update is called once per frame
+    private void Start()
+    {
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("Could not find AudioSource in PowerUp.");
+        }
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (_spriteRenderer == null)
+        {
+            Debug.LogError("Count not find SpriteRenderer in PowerUp.");
+        }
+    }
+
+
     void Update()
     {
         Vector3 powerUpMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
@@ -24,7 +40,7 @@ public class PowerUp : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && _spriteRenderer.enabled)
         {
             Player player = other.GetComponent<Player>();
             if (player != null)
@@ -45,7 +61,18 @@ public class PowerUp : MonoBehaviour
                         break;
                 }
             }
-            Destroy(this.gameObject);
+            
+            _audioSource.Play();
+            _spriteRenderer.enabled = false;
+            StartCoroutine(DestroyCoolDown());
+            
+ 
         }
+    }
+
+    IEnumerator DestroyCoolDown()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(this.gameObject);
     }
 }

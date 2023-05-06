@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Astroid : MonoBehaviour
+public class Asteroid : MonoBehaviour
 {
     private float _rotateSpeed = 20.0f;
     private float _speed = 10.0f;
@@ -18,13 +18,13 @@ public class Astroid : MonoBehaviour
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null)
         {
-            Debug.LogError("Player could not be found in Astroid.");
+            Debug.LogError("Player could not be found in Asteroid.");
         }
 
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
-            Debug.LogError("SpawnManager could not be found in Asroid.");
+            Debug.LogError("SpawnManager could not be found in Asteroid.");
         }
         _rotateDirection = Random.Range(-1, 2);
     }
@@ -34,9 +34,9 @@ public class Astroid : MonoBehaviour
     {
         transform.Rotate(new Vector3(0, 0, _rotateDirection) * _rotateSpeed * Time.deltaTime);
 
-        Vector3 astroidMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
+        Vector3 asteroidMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
 
-        transform.Translate(astroidMovement);
+        transform.Translate(asteroidMovement);
 
         if (transform.position.y < -6.45)
         {
@@ -50,9 +50,9 @@ public class Astroid : MonoBehaviour
         {
             if (_player != null)
             {
-                _player.Damage();
+                _player.DamageToKill(); 
             }
-            DestroyAstroid();
+            DestroyAsteroid();
         }
 
         if (other.tag == "Laser")
@@ -62,18 +62,18 @@ public class Astroid : MonoBehaviour
             {
                 _player.AddToScore(100);
             }
-            DestroyAstroid();
+            DestroyAsteroid();
         }
 
         if (other.tag == "Enemy")
         {
             Enemy _enemy = other.GetComponent<Enemy>();
             _enemy.DestroyEnemy();
-            DestroyAstroid();
+            DestroyAsteroid();
         }
     }
 
-    private void DestroyAstroid()
+    private void DestroyAsteroid()
     {
         GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         Destroy(this.gameObject);

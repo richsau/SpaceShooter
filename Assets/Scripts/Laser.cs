@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//todo: make sure item is visible to destroy anything
+
 public class Laser : MonoBehaviour
 {
     [SerializeField]
