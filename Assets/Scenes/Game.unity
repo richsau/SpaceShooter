@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -155,20 +155,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4491ae4a44a655e47a6e189aefccda23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 5
-  _speedMultiplier: 2
-  _laserPrefab: {fileID: 326174805065554657, guid: a3314d5d091c92442a979583c8f3205f, type: 3}
-  _laserTrippleShotPrefab: {fileID: 2763291010317197543, guid: 1ea094b976364e24f8175cb3b472b785, type: 3}
-  _cooldownTime: 0.15
-  _lives: 3
-  _isTrippleShotActive: 0
-  _isSpeedActive: 0
-  _isShieldActive: 0
-  _shieldVisual: {fileID: 344959158}
-  _score: 0
-  _leftWingFire: {fileID: 28734676}
-  _rightWingFire: {fileID: 566791230}
+  _explosionPrefab: {fileID: 418190709180122551, guid: eb5380d9267335c42a0cc6fc6fc301c4, type: 3}
   _laserAudioClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _rightWingFire: {fileID: 566791230}
+  _leftWingFire: {fileID: 28734676}
+  _shieldVisual: {fileID: 344959158}
+  _laserTrippleShotPrefab: {fileID: 2763291010317197543, guid: 1ea094b976364e24f8175cb3b472b785, type: 3}
+  _laserPrefab: {fileID: 326174805065554657, guid: a3314d5d091c92442a979583c8f3205f, type: 3}
 --- !u!212 &10374842
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -648,7 +641,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e138dc4612f9b43a11f74b623cf3d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isGameOver: 0
 --- !u!4 &362020854
 Transform:
   m_ObjectHideFlags: 0

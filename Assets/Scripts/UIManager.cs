@@ -16,7 +16,6 @@ public class UIManager : MonoBehaviour
     private Image _livesImage;
     [SerializeField]
     private Sprite[] _liveSprites;
-
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
 
@@ -71,7 +70,7 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
         _gameOverText.gameObject.SetActive(false);
         _gameManager.SetGameOver(true);
-        _playerMessageText.text = "Press 1 to play again or Q to quit.";
+        _playerMessageText.text = "Press 1 to play again or [ESC] to quit.";
         _playerMessageText.gameObject.SetActive(true);
     }
 

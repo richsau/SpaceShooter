@@ -5,41 +5,33 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 3.5f;
+    private GameObject _explosionPrefab;
     [SerializeField]
-    private float _speedMultiplier = 2f;
-    [SerializeField]
-    private GameObject _laserPrefab;
-    [SerializeField]
-    private GameObject _laserTrippleShotPrefab;
-    [SerializeField]
-    private float _cooldownTime = 0.15f; 
-    private float _canFireAgain = -1f;
-    [SerializeField]
-    private int _lives = 3;
-    private SpawnManager _spawnManager;
-    [SerializeField]
-    private bool _isTrippleShotActive = false;
-    [SerializeField]
-    private bool _isSpeedActive = false;
-    [SerializeField]
-    private bool _isShieldActive = false;
-    [SerializeField]
-    private GameObject _shieldVisual;
-    [SerializeField]
-    private int _score = 0;
-    private UIManager _uiManager;
-    private bool _leftWingOnFire = false;
-    //private bool _rightWingOnFire = false;
-    [SerializeField]
-    private GameObject _leftWingFire;
+    private AudioClip _laserAudioClip;
     [SerializeField]
     private GameObject _rightWingFire;
     [SerializeField]
-    private AudioClip _laserAudioClip;
+    private GameObject _leftWingFire;
+    [SerializeField]
+    private GameObject _shieldVisual;
+    [SerializeField]
+    private GameObject _laserTrippleShotPrefab;
+    [SerializeField]
+    private GameObject _laserPrefab;
+    private float _speed = 3.5f;
+    private float _speedMultiplier = 2f;
+    private float _cooldownTime = 0.15f; 
+    private float _canFireAgain = -1f;
+    private int _lives = 3;
+    private SpawnManager _spawnManager;
+    private bool _isTrippleShotActive = false;
+    private bool _isSpeedActive = false;
+    private bool _isShieldActive = false;
+    private int _score = 0;
+    private UIManager _uiManager;
+    private bool _leftWingOnFire = false;
     private AudioSource _audioSource;
-
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -47,13 +39,13 @@ public class Player : MonoBehaviour
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
-            Debug.LogError("The Spawn Manager is null.");
+            Debug.LogError("Could not find SpawnManager in Player.");
         }
 
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
         {
-            Debug.LogError("AudioSource could not be found in Player.");
+            Debug.LogError("Could not find AudioSource in Player.");
         } else
         {
             _audioSource.clip = _laserAudioClip;
@@ -62,7 +54,7 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
-            Debug.LogError("The UI Manager is null.");
+            Debug.LogError("Could not find UIManager in Player.");
         }
     }
 
@@ -104,6 +96,16 @@ public class Player : MonoBehaviour
         }
         _audioSource.Play();
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "EnemyLaser")
+        {
+            Destroy(other.gameObject);
+            Damage();
+        }
+    }
+
 
     public void DamageToKill()
     {
@@ -158,6 +160,7 @@ public class Player : MonoBehaviour
                 break;
             case 0:
                 _spawnManager.StopSpawning();
+                GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
                 Destroy(this.gameObject);
                 _uiManager.DisplayGameOver();
                 break;

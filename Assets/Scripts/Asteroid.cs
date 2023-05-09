@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _explosionPrefab;
     private float _rotateSpeed = 20.0f;
     private float _speed = 10.0f;
     private Player _player;
-    [SerializeField]
-    private GameObject _explosionPrefab;
     private SpawnManager _spawnManager;
     private int _rotateDirection;
+    private bool _isVisible = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +28,7 @@ public class Asteroid : MonoBehaviour
             Debug.LogError("SpawnManager could not be found in Asteroid.");
         }
         _rotateDirection = Random.Range(-1, 2);
+        _isVisible = false;
     }
 
     // Update is called once per frame
@@ -38,6 +40,11 @@ public class Asteroid : MonoBehaviour
 
         transform.Translate(asteroidMovement);
 
+        if(transform.position.y < 7.1)
+        {
+            _isVisible = true;
+        }
+
         if (transform.position.y < -6.45)
         {
             Destroy(this.gameObject);
@@ -46,7 +53,7 @@ public class Asteroid : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && _isVisible)
         {
             if (_player != null)
             {
@@ -55,7 +62,7 @@ public class Asteroid : MonoBehaviour
             DestroyAsteroid();
         }
 
-        if (other.tag == "Laser")
+        if (other.tag == "Laser" && _isVisible)
         {
             Destroy(other.gameObject);
             if (_player != null)
@@ -65,7 +72,7 @@ public class Asteroid : MonoBehaviour
             DestroyAsteroid();
         }
 
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy" && _isVisible)
         {
             Enemy _enemy = other.GetComponent<Enemy>();
             _enemy.DestroyEnemy();

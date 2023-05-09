@@ -25,7 +25,6 @@ public class PowerUp : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         Vector3 powerUpMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
@@ -57,16 +56,13 @@ public class PowerUp : MonoBehaviour
                         player.ShieldActive();
                         break;
                     default:
-                        Debug.LogError("Unexpected PowerUp value in PowerUp.");
+                        Debug.LogError("Unexpected PowerUpID value in PowerUp.");
                         break;
                 }
             }
-            
             _audioSource.Play();
             _spriteRenderer.enabled = false;
             StartCoroutine(DestroyCoolDown());
-            
- 
         }
     }
 

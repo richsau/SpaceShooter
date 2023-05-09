@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
-{
-    private float _enemySpeed = 4.0f;
+{   
+    [SerializeField]
+    private GameObject _enemyLaserPrefab;
+    private float _enemySpeed = 2.0f;
     private Player _player;
     private Animator _enemyDeathAnim;
     private AudioSource _audioSource;
-
+    private bool _isVisible = false;
+    private bool _isDestroyed = false;
+    
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -26,6 +30,8 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("AudioSource could not be found in Enemy.");
         }
+        _isVisible = false;
+        StartCoroutine(FireLaser());
     }
 
     // Update is called once per frame
@@ -35,16 +41,23 @@ public class Enemy : MonoBehaviour
 
         transform.Translate(enemyMovement);
 
+        if (transform.position.y < 7.44)
+        {
+            _isVisible = true;
+        }
+
         if (transform.position.y < -5.5)
         {
+            _isVisible = false;
             float randomX = Random.Range(-8.5f, 8.5f);
             transform.position = new Vector3(randomX, 7.5f, 0);
+            _isVisible = false;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && _isVisible)
         {
             Player player = other.GetComponent<Player>();
             if (player != null)
@@ -54,7 +67,7 @@ public class Enemy : MonoBehaviour
             DestroyEnemy();
         }
 
-        if (other.tag == "Laser")
+        if (other.tag == "Laser" && _isVisible)
         {
             Destroy(other.gameObject);
             if (_player != null)
@@ -65,8 +78,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    IEnumerator FireLaser()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(1, 7));
+            if (_isVisible && !_isDestroyed)
+            {
+                Instantiate(_enemyLaserPrefab, transform.position, Quaternion.identity);
+            }
+        }
+    }
+
     public void DestroyEnemy()
     {
+        _isDestroyed = true;
         _enemyDeathAnim.SetTrigger("OnEnemyDeath");
         _audioSource.Play();
         _enemySpeed = 0;

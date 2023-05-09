@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
-{
-    [SerializeField]
+{ 
     private bool _isGameOver = false;
 
     public void SetGameOver(bool isGameOver)
@@ -20,5 +19,22 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(1); // load the game
         }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            QuitApplication();
+        }
+    }
+
+    public void QuitApplication()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+    }
+
+    private void OnApplicationQuit()
+    {
+        Debug.Log("Exiting game...");
     }
 }
