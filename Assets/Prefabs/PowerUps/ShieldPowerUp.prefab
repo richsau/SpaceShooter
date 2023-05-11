@@ -147,8 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
-  powerUpID: 2
-  _audioClip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  powerUpID: 1
 --- !u!95 &6853167104469234216
 Animator:
   serializedVersion: 5

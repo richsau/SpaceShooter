@@ -33,7 +33,7 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(5, 11));
         while (_okToSpawn == true)
         {
-            _powerUpType = Random.Range(0, 3);
+            _powerUpType = Random.Range(0, 2);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
             Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);

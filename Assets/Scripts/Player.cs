@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     private GameObject _laserTrippleShotPrefab;
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _thrusterVisual;
     private float _speed = 3.5f;
     private float _speedMultiplier = 2f;
     private float _cooldownTime = 0.15f; 
@@ -31,6 +33,7 @@ public class Player : MonoBehaviour
     private UIManager _uiManager;
     private bool _leftWingOnFire = false;
     private AudioSource _audioSource;
+    private int _speedFuel = 0;
     
     // Start is called before the first frame update
     void Start()
@@ -56,6 +59,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Could not find UIManager in Player.");
         }
+        StartCoroutine(SpeedFuelFillUp());
     }
 
     // Update is called once per frame
@@ -65,6 +69,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFireAgain)
         {
             FireLaser();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isSpeedActive)
+        {
+            ActivateSpeed();
         }
     }
 
@@ -185,26 +193,30 @@ public class Player : MonoBehaviour
         _isTrippleShotActive = false;
     }
 
-    public void SpeedActive()
+    private void ActivateSpeed()
     {
-        if (!_isSpeedActive) // prevent more than one speed powerup at the same time
-        {
-            _isSpeedActive = true;
-            _speed *= _speedMultiplier;
-            StartCoroutine(SpeedCoolDown());
-        }
+        _isSpeedActive = true;
+        _speed *= _speedMultiplier;
+        _thrusterVisual.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); // grow the thruster visual
+        StartCoroutine(SpeedCoolDown());
     }
 
     IEnumerator SpeedCoolDown()
     {
-        yield return new WaitForSeconds(5f);
+        while (_speedFuel > 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            _speedFuel--;
+            _uiManager.UpdateSpeedFuel(_speedFuel);
+        }
         _speed /= _speedMultiplier;
         _isSpeedActive = false;
+        _thrusterVisual.transform.localScale = new Vector3(0.5f, 1.0f, 1.0f); // shrink the thruster visual
     }
 
     public void ShieldActive()
     {
-        if (!_isShieldActive)
+        if (!_isShieldActive)  // prevent more than one shield powerup at the same time
         {
             _shieldVisual.SetActive(true);
             _isShieldActive = true;
@@ -215,6 +227,19 @@ public class Player : MonoBehaviour
     {
         _score += amountToAdd;
         _uiManager.UpdateScore(_score);
+    }
+
+    IEnumerator SpeedFuelFillUp()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(.25f);
+            if (_speedFuel < 100 && !_isSpeedActive)
+            {
+                _speedFuel++;
+                _uiManager.UpdateSpeedFuel(_speedFuel);
+            }
+        }
     }
 }
 

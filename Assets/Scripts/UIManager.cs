@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour
     private Image _livesImage;
     [SerializeField]
     private Sprite[] _liveSprites;
+    [SerializeField]
+    private Slider _speedFuel;
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
 
@@ -55,6 +57,11 @@ public class UIManager : MonoBehaviour
     public void HideGameOver()
     {
         _gameOverText.gameObject.SetActive(false);
+    }
+
+    public void UpdateSpeedFuel(int NewSpeedFuel)
+    {
+        _speedFuel.value = NewSpeedFuel;
     }
 
     IEnumerator GameOverCoolDown()
