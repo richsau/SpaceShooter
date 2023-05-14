@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _scoreText;
     [SerializeField]
+    private TMP_Text _ammoCountText;
+    [SerializeField]
     private TMP_Text _gameOverText;
     [SerializeField]
     private TMP_Text _playerMessageText;
@@ -42,6 +44,27 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int playerScore)
     {
         _scoreText.text = "Score: " + playerScore;
+    }
+
+    public void UpdateAmmo(int ammoCount)
+    {
+        _ammoCountText.text = "Ammo: " + ammoCount;
+    }
+
+    public void BlinkAmmoText()
+    {
+        if (_ammoCountText.IsActive())
+        {
+            _ammoCountText.gameObject.SetActive(false);
+        } else
+        {
+            _ammoCountText.gameObject.SetActive(true);
+        }
+    }
+
+    public void DisplayAmmoText()
+    {
+        _ammoCountText.gameObject.SetActive(true);
     }
 
     public void UpdateLives(int currentLives)

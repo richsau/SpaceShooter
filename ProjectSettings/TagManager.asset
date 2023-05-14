@@ -11,6 +11,9 @@ TagManager:
   - ShieldPowerUp
   - Astroid
   - EnemyLaser
+  - AmmoPowerUp
+  - HealthPowerUp
+  - FirePowerUp
   layers:
   - Default
   - TransparentFX

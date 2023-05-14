@@ -14,6 +14,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerupPrefabs;
     private int _powerUpType;
     private bool _okToSpawn = false;
+    private bool _OkToSoawnHealth = false;
     
     IEnumerator SpawnEnemy()
     {
@@ -33,11 +34,23 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(5, 11));
         while (_okToSpawn == true)
         {
-            _powerUpType = Random.Range(0, 2);
+            _powerUpType = Random.Range(0, 4);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
-            Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(5, 11));
+            switch(_powerUpType)
+            {
+                case 3:
+                    if (_OkToSoawnHealth)
+                    {
+                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                    }
+                    break;
+                default:
+                    Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                    break;
+            }
+            yield return new WaitForSeconds(Random.Range(1, 2));
+            //yield return new WaitForSeconds(Random.Range(5, 11));
         }
     }
 
@@ -56,6 +69,11 @@ public class SpawnManager : MonoBehaviour
     public void StopSpawning()
     {
         _okToSpawn = false;
+    }
+
+    public void SetHealthSpawn(bool OkToSpawn)
+    {
+        _OkToSoawnHealth = OkToSpawn;
     }
 
     public void StartSpawning()

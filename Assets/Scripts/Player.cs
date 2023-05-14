@@ -28,12 +28,13 @@ public class Player : MonoBehaviour
     private SpawnManager _spawnManager;
     private bool _isTrippleShotActive = false;
     private bool _isSpeedActive = false;
-    private bool _isShieldActive = false;
+    private int _shieldLevel = 0;
     private int _score = 0;
     private UIManager _uiManager;
     private bool _leftWingOnFire = false;
     private AudioSource _audioSource;
     private int _speedFuel = 0;
+    private int _ammoCount = 15;
     
     // Start is called before the first frame update
     void Start()
@@ -59,7 +60,9 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Could not find UIManager in Player.");
         }
+        _spawnManager.SetHealthSpawn(false);
         StartCoroutine(SpeedFuelFillUp());
+        StartCoroutine(LowAmmoCheck());
     }
 
     // Update is called once per frame
@@ -93,16 +96,21 @@ public class Player : MonoBehaviour
 
     void FireLaser()
     {
-        _canFireAgain = Time.time + _cooldownTime;
-        if (_isTrippleShotActive)
+        if (_ammoCount > 0)
         {
-            Instantiate(_laserTrippleShotPrefab, transform.position, Quaternion.identity);
+            _canFireAgain = Time.time + _cooldownTime;
+            if (_isTrippleShotActive)
+            {
+                Instantiate(_laserTrippleShotPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+            }
+            _audioSource.Play();
+            _ammoCount--;
+            _uiManager.UpdateAmmo(_ammoCount);
         }
-        else
-        {
-            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
-        }
-        _audioSource.Play();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -117,10 +125,10 @@ public class Player : MonoBehaviour
 
     public void DamageToKill()
     {
-        if (_isShieldActive)
+        if (_shieldLevel > 0)
         {
             _shieldVisual.SetActive(false);
-            _isShieldActive = false;
+            _shieldLevel = 0;
         }
         else
         {
@@ -132,15 +140,32 @@ public class Player : MonoBehaviour
     
     public void Damage()
     {
-        if (_isShieldActive)
+        if (_shieldLevel > 0)
         {
-            _shieldVisual.SetActive(false);
-            _isShieldActive = false;
+            switch (_shieldLevel)
+            {
+                case 3:
+                    _shieldLevel = 2;
+                    _shieldVisual.transform.localScale = new Vector3(1, 2, 1);
+                    break;
+                case 2:
+                    _shieldLevel = 1;
+                    _shieldVisual.transform.localScale = new Vector3(.7f, 2, 1);
+                    break;
+                case 1:
+                    _shieldLevel = 0;
+                    _shieldVisual.SetActive(false);
+                    break;
+                default:
+                    Debug.LogError("Unexpected shield level in Player.");
+                    break;
+            }
             return; // exit out of damage method
         }
         
         _lives--;
         _uiManager.UpdateLives(_lives);
+        _spawnManager.SetHealthSpawn(true);
 
         switch (_lives)
         {
@@ -173,9 +198,49 @@ public class Player : MonoBehaviour
                 _uiManager.DisplayGameOver();
                 break;
             default:
-                Debug.LogError("Unexpected lives count in Player.");
+                Debug.LogError("Unexpected lives count in Player.Dammage");
                 break;
         }
+    }
+
+    public void AddHealth()
+    {
+        switch (_lives)
+        {
+            case 1: // both wings are on fire
+                if (Random.Range(0, 2) == 0) // randomly pick one to repair
+                {
+                    _leftWingOnFire = false;
+                    _leftWingFire.SetActive(false);
+                } else
+                {
+                    _rightWingFire.SetActive(false);
+                }
+                _spawnManager.SetHealthSpawn(true);
+                break;
+            case 2: // one wing on fire
+                if (_leftWingOnFire)
+                {
+                    _leftWingFire.SetActive(false);
+                } else
+                {
+                    _rightWingFire.SetActive(false);
+                }
+                _spawnManager.SetHealthSpawn(false);
+                break;
+            default:
+                Debug.LogError("Unexpected lives count in Player.AddHealth");
+                break;
+        }
+        _lives++;
+        _uiManager.UpdateLives(_lives);
+    }
+
+
+    public void RefillAmmo()
+    {
+        _ammoCount += 15;
+        _uiManager.UpdateAmmo(_ammoCount);
     }
 
     public void TrippleShotActive()
@@ -186,6 +251,23 @@ public class Player : MonoBehaviour
             StartCoroutine(TrippleShotCoolDown());
         }
     }
+
+    IEnumerator LowAmmoCheck()
+    {
+        while (true)
+        {
+            if (_ammoCount < 6)
+            {
+                _uiManager.BlinkAmmoText();
+            }
+            else
+            {
+                _uiManager.DisplayAmmoText();
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
 
     IEnumerator TrippleShotCoolDown()
     {
@@ -216,11 +298,9 @@ public class Player : MonoBehaviour
 
     public void ShieldActive()
     {
-        if (!_isShieldActive)  // prevent more than one shield powerup at the same time
-        {
-            _shieldVisual.SetActive(true);
-            _isShieldActive = true;
-        }
+         _shieldVisual.SetActive(true);
+         _shieldLevel = 3;
+         _shieldVisual.transform.localScale = new Vector3(2, 2, 1);
     }
 
     public void AddToScore(int amountToAdd)
