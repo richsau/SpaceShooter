@@ -14,7 +14,7 @@ public class Laser : MonoBehaviour
 
         transform.Translate(laserMovement);
 
-        if (transform.position.y > 8.0)
+        if (transform.position.y > 20.0)
         {
             if (transform.parent == null)
             {

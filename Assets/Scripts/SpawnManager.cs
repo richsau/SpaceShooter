@@ -14,7 +14,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerupPrefabs;
     private int _powerUpType;
     private bool _okToSpawn = false;
-    private bool _OkToSoawnHealth = false;
+    private bool _okToSpawnHealth = false;
+    private bool _okToSpawnMegaLaser = false;
     
     IEnumerator SpawnEnemy()
     {
@@ -31,16 +32,21 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpwanPowerUp()
     {
-        yield return new WaitForSeconds(Random.Range(5, 11));
         while (_okToSpawn == true)
         {
-            _powerUpType = Random.Range(0, 4);
+            _powerUpType = Random.Range(0, 5);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
             switch(_powerUpType)
             {
                 case 3:
-                    if (_OkToSoawnHealth)
+                    if (_okToSpawnHealth)
+                    {
+                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                    }
+                    break;
+                case 4:
+                    if (_okToSpawnMegaLaser)
                     {
                         Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
                     }
@@ -49,8 +55,7 @@ public class SpawnManager : MonoBehaviour
                     Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
                     break;
             }
-            yield return new WaitForSeconds(Random.Range(1, 2));
-            //yield return new WaitForSeconds(Random.Range(5, 11));
+            yield return new WaitForSeconds(Random.Range(5, 11));
         }
     }
 
@@ -73,7 +78,12 @@ public class SpawnManager : MonoBehaviour
 
     public void SetHealthSpawn(bool OkToSpawn)
     {
-        _OkToSoawnHealth = OkToSpawn;
+        _okToSpawnHealth = OkToSpawn;
+    }
+
+    public void SetMegaLaserSpawn(bool OkToSpawn)
+    {
+        _okToSpawnMegaLaser = OkToSpawn;
     }
 
     public void StartSpawning()

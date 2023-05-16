@@ -13,7 +13,7 @@ TagManager:
   - EnemyLaser
   - AmmoPowerUp
   - HealthPowerUp
-  - FirePowerUp
+  - MegaLaserPowerUp
   layers:
   - Default
   - TransparentFX

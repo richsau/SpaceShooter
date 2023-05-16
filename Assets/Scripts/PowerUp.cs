@@ -7,7 +7,7 @@ public class PowerUp : MonoBehaviour
     [SerializeField]
     private float _speed = 8.0f;
     [SerializeField]
-    private int powerUpID; // 0 = TrippleShot, 1 = Shield, 2 = Ammo
+    private int powerUpID; // 0 = TrippleShot, 1 = Shield, 2 = Ammo, 3 = Health, 4 = MegaShot
     private AudioSource _audioSource;
     private SpriteRenderer _spriteRenderer;
 
@@ -57,6 +57,9 @@ public class PowerUp : MonoBehaviour
                         break;
                     case 3: // Health
                         player.AddHealth();
+                        break;
+                    case 4: // Mega Laser
+                        player.MegaLasertActivate();
                         break;
                     default:
                         Debug.LogError("Unexpected PowerUpID value in PowerUp.");

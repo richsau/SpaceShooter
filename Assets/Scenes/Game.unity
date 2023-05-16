@@ -163,6 +163,7 @@ MonoBehaviour:
   _laserTrippleShotPrefab: {fileID: 2763291010317197543, guid: 1ea094b976364e24f8175cb3b472b785, type: 3}
   _laserPrefab: {fileID: 326174805065554657, guid: a3314d5d091c92442a979583c8f3205f, type: 3}
   _thrusterVisual: {fileID: 510516330}
+  _megaLaserPrefab: {fileID: 9222885365715584288, guid: b98c83dbf0382284c81a67d155f0117b, type: 3}
 --- !u!212 &10374842
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -495,6 +496,7 @@ MonoBehaviour:
   - {fileID: 5006010203791600777, guid: 04808a4ff9dd6be42ac9c369e4f6588e, type: 3}
   - {fileID: 8632304233509207409, guid: c55305ad7ac2ac042aa45981069d27a3, type: 3}
   - {fileID: 1579408225981926046, guid: d7f98ee89a9c42e4b812d5409ca98bc8, type: 3}
+  - {fileID: 8338564950930004162, guid: 2092b615ca692364191c6b5e771b27ec, type: 3}
 --- !u!4 &277321201
 Transform:
   m_ObjectHideFlags: 0
@@ -1499,6 +1501,7 @@ GameObject:
   - component: {fileID: 1735204113}
   - component: {fileID: 1735204116}
   - component: {fileID: 1735204117}
+  - component: {fileID: 1735204118}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1727,6 +1730,22 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!114 &1735204118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735204112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9fca7f52b519704e86332f268d2c135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 1735204114}
+  cameraShakeDuration: 0.5
+  cameraShakeDecreaseFactor: 1
+  cameraShakeAmount: 1
 --- !u!1 &1786018783
 GameObject:
   m_ObjectHideFlags: 0
