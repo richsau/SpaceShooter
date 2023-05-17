@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserAudioClip;
     [SerializeField]
+    private AudioClip _explosionAudioClip;
+    [SerializeField]
     private GameObject _rightWingFire;
     [SerializeField]
     private GameObject _leftWingFire;
@@ -56,7 +58,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Could not find AudioSource in Player.");
         } else
         {
-            _audioSource.clip = _laserAudioClip;
+            //_audioSource.clip = _laserAudioClip;
         }
 
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -110,6 +112,7 @@ public class Player : MonoBehaviour
 
     void FireLaser()
     {
+        _audioSource.clip = _laserAudioClip;
         _canFireAgain = Time.time + _cooldownTime;
         if (_isMegaLaserActive)
         {
@@ -139,6 +142,8 @@ public class Player : MonoBehaviour
         if (other.tag == "EnemyLaser")
         {
             Destroy(other.gameObject);
+            _audioSource.clip = _explosionAudioClip;
+            _audioSource.Play();
             Damage();
         }
     }

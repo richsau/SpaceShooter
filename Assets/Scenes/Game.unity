@@ -157,6 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _explosionPrefab: {fileID: 418190709180122551, guid: eb5380d9267335c42a0cc6fc6fc301c4, type: 3}
   _laserAudioClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _explosionAudioClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _rightWingFire: {fileID: 566791230}
   _leftWingFire: {fileID: 28734676}
   _shieldVisual: {fileID: 344959158}
@@ -1743,9 +1744,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1735204114}
-  cameraShakeDuration: 0.5
-  cameraShakeDecreaseFactor: 1
-  cameraShakeAmount: 1
 --- !u!1 &1786018783
 GameObject:
   m_ObjectHideFlags: 0
