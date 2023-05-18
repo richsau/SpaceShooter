@@ -12,6 +12,9 @@ public class Enemy : MonoBehaviour
     private AudioSource _audioSource;
     private bool _isVisible = false;
     private bool _isDestroyed = false;
+    private int _currentXDirection = 0;
+    private float _maxX = 9.7f;
+    private float _minX = -9.7f;
     
     private void Start()
     {
@@ -32,16 +35,25 @@ public class Enemy : MonoBehaviour
         }
         _isVisible = false;
         StartCoroutine(FireLaser());
+        StartCoroutine(ChangeDirections());
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 enemyMovement = new Vector3(0, -1, 0) * _enemySpeed * Time.deltaTime;
+        transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
+        if (transform.position.x > _maxX) 
+        {
+            _currentXDirection = -1;
+        } 
 
-        transform.Translate(enemyMovement);
+        if (transform.position.x < _minX) 
+        {
+            _currentXDirection = 1;
+        }
 
-        if (transform.position.y < 7.44)
+        if (transform.position.y < 7.44) 
         {
             _isVisible = true;
         }
@@ -49,9 +61,8 @@ public class Enemy : MonoBehaviour
         if (transform.position.y < -5.5)
         {
             _isVisible = false;
-            float randomX = Random.Range(-8.5f, 8.5f);
+            float randomX = Random.Range(_minX, _maxX);
             transform.position = new Vector3(randomX, 7.5f, 0);
-            _isVisible = false;
         }
     }
 
@@ -87,6 +98,18 @@ public class Enemy : MonoBehaviour
             {
                 Instantiate(_enemyLaserPrefab, transform.position, Quaternion.identity);
             }
+        }
+    }
+
+    // ChangeDirections
+    // There's a 2 in 3 chance that the current direction 
+    // will change every 1 to 3 seconds.
+    IEnumerator ChangeDirections()
+    {
+        while (true)
+        {
+            _currentXDirection = Random.Range(-1, 2);
+            yield return new WaitForSeconds(Random.Range(1, 4));
         }
     }
 
