@@ -41,6 +41,7 @@ public class Player : MonoBehaviour
     private int _speedFuel = 0;
     private int _ammoCount = 15;
     private CameraShake _cameraShake;
+    private int _maxAmmo = 20;
     
     // Start is called before the first frame update
     void Start()
@@ -71,6 +72,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Could not find CameraShake in Player.");
         }
+        _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
         _spawnManager.SetHealthSpawn(false);
         StartCoroutine(SpeedFuelFillUp());
         StartCoroutine(LowAmmoCheck());
@@ -131,7 +133,7 @@ public class Player : MonoBehaviour
                     Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
                 }
                 _ammoCount--;
-                _uiManager.UpdateAmmo(_ammoCount);
+                _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
                 _audioSource.Play();
             }
         }
@@ -272,7 +274,11 @@ public class Player : MonoBehaviour
     public void RefillAmmo()
     {
         _ammoCount += 15;
-        _uiManager.UpdateAmmo(_ammoCount);
+        if (_ammoCount > _maxAmmo)
+        {
+            _ammoCount = _maxAmmo;
+        }
+        _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
     }
 
     public void TrippleShotActive()

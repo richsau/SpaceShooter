@@ -46,9 +46,9 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + playerScore;
     }
 
-    public void UpdateAmmo(int ammoCount)
+    public void UpdateAmmo(int ammoCount, int maxAmmo)
     {
-        _ammoCountText.text = "Ammo: " + ammoCount;
+        _ammoCountText.text = "Ammo: " + ammoCount + " / " + maxAmmo;
     }
 
     public void BlinkAmmoText()
