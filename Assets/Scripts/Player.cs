@@ -95,6 +95,13 @@ public class Player : MonoBehaviour
         {
             _isMegaLaserActive = true;
         }
+        if (_ammoCount < _maxAmmo)
+        {
+            _spawnManager.SetAmmoSpawn(true);
+        } else
+        {
+            _spawnManager.SetAmmoSpawn(false);
+        }
     }
 
     void MovePlayer()
@@ -137,6 +144,7 @@ public class Player : MonoBehaviour
                 _audioSource.Play();
             }
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)

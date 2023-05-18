@@ -16,6 +16,7 @@ public class SpawnManager : MonoBehaviour
     private bool _okToSpawn = false;
     private bool _okToSpawnHealth = false;
     private bool _okToSpawnMegaLaser = false;
+    private bool _okToSpawnAmmo = true;
     
     IEnumerator SpawnEnemy()
     {
@@ -39,6 +40,12 @@ public class SpawnManager : MonoBehaviour
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
             switch(_powerUpType)
             {
+                case 2:
+                    if (_okToSpawnAmmo)
+                    {
+                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                    }
+                    break;
                 case 3:
                     if (_okToSpawnHealth)
                     {
@@ -79,6 +86,11 @@ public class SpawnManager : MonoBehaviour
     public void SetHealthSpawn(bool OkToSpawn)
     {
         _okToSpawnHealth = OkToSpawn;
+    }
+
+    public void SetAmmoSpawn(bool OkToSpawn)
+    {
+        _okToSpawnAmmo = OkToSpawn;
     }
 
     public void SetMegaLaserSpawn(bool OkToSpawn)
