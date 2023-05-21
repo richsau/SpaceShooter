@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _scoreText;
     [SerializeField]
+    private TMP_Text _levelText;
+    [SerializeField]
     private TMP_Text _ammoCountText;
     [SerializeField]
     private TMP_Text _gameOverText;
@@ -22,6 +24,7 @@ public class UIManager : MonoBehaviour
     private Slider _speedFuel;
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +42,11 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + 0;
         HideGameOver();
         StartCoroutine(GameStartCoolDown());
+    }
+
+    public void UpdateLevel(int level)
+    {
+        StartCoroutine(NewLevelCoolDown(level));
     }
 
     public void UpdateScore(int playerScore)
@@ -113,6 +121,17 @@ public class UIManager : MonoBehaviour
         _gameManager.SetGameOver(false);
         _spawnManager.StartSpawning();
     }
+
+    IEnumerator NewLevelCoolDown(int level)
+    {
+        _playerMessageText.text = "Wave " + level;
+        _playerMessageText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        _playerMessageText.gameObject.SetActive(false);
+    }
+
+
+
 }
 
 

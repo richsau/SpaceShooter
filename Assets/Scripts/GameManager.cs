@@ -6,6 +6,19 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 { 
     private bool _isGameOver = false;
+    [SerializeField]
+    private int _level = 0;
+    private UIManager _uiManager;
+
+
+    public void Start()
+    {
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("Could not find UIManager in GameManager.");
+        }
+    }
 
     public void SetGameOver(bool isGameOver)
     {
@@ -36,5 +49,16 @@ public void QuitApplication()
     private void OnApplicationQuit()
     {
         Debug.Log("Exiting game...");
+    }
+
+    public int GetLevel()
+    {
+        return _level;
+    }
+
+    public void NewLevel()
+    {
+        _level++;
+        _uiManager.UpdateLevel(_level);
     }
 }

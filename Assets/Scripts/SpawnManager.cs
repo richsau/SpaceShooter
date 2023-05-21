@@ -17,23 +17,56 @@ public class SpawnManager : MonoBehaviour
     private bool _okToSpawnHealth = false;
     private bool _okToSpawnMegaLaser = false;
     private bool _okToSpawnAmmo = true;
-    
+    private GameManager _gameManager;
+    private int _enemiesSpawned = 0;
+
+
+    void Start()
+    {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("Could not find GameManager in SpawnManager.");
+        }
+    }
+
+
     IEnumerator SpawnEnemy()
     {
         yield return new WaitForSeconds(3.0f);
+        
         while (_okToSpawn == true)
         {
-            float randomX = Random.Range(-8.5f, 8.5f);
-            Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnLocation, Quaternion.identity);
-            newEnemy.transform.parent = _enemyContainer.transform;
+            int level;
+
+            level = _gameManager.GetLevel();
+
+            if (_enemiesSpawned < (level * 5) && (level > 0))
+            {
+                SpawnNewEnemy();
+            } else
+            {
+                _okToSpawn = false;
+                _gameManager.NewLevel();
+                _enemiesSpawned = 0;
+                _okToSpawn = true;
+            }
             yield return new WaitForSeconds(5f);
         }
     }
 
+    private void SpawnNewEnemy()
+    {
+        float randomX = Random.Range(-8.5f, 8.5f);
+        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
+        GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnLocation, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemiesSpawned++;  
+    }
+
     IEnumerator SpwanPowerUp()
     {
-        while (_okToSpawn == true)
+        while (_okToSpawn == true && _gameManager.GetLevel() > 0)
         {
             _powerUpType = Random.Range(0, 5);
             float randomX = Random.Range(-8.5f, 8.5f);
@@ -68,13 +101,13 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnAsteroid()
     {
-        yield return new WaitForSeconds(Random.Range(7, 15));
-        while (_okToSpawn == true)
+        yield return new WaitForSeconds(Random.Range(20, 60));
+        while (_okToSpawn == true && _gameManager.GetLevel() > 0)
         {
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 asteroidSpawnLocation = new Vector3(randomX, 7.5f, 0);
             Instantiate(_asteroidPrefab, asteroidSpawnLocation, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(7, 15));
+            yield return new WaitForSeconds(Random.Range(20, 60));
         }
     }
 

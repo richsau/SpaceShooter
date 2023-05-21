@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -646,6 +646,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e138dc4612f9b43a11f74b623cf3d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _level: 0
+  _numEnemies: 0
 --- !u!4 &362020854
 Transform:
   m_ObjectHideFlags: 0
@@ -2388,6 +2390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scoreText: {fileID: 1885445162}
+  _levelText: {fileID: 0}
   _ammoCountText: {fileID: 1243912192}
   _gameOverText: {fileID: 1995054787}
   _playerMessageText: {fileID: 1786018784}

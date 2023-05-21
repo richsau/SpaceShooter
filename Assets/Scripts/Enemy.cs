@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     private Player _player;
     private Animator _enemyDeathAnim;
     private AudioSource _audioSource;
+    private GameManager _gameManager;
     private bool _isVisible = false;
     private bool _isDestroyed = false;
     private int _currentXDirection = 0;
@@ -32,6 +33,11 @@ public class Enemy : MonoBehaviour
         if (_audioSource == null)
         {
             Debug.LogError("AudioSource could not be found in Enemy.");
+        }
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("Could not find GameManager in Enemy.");
         }
         _isVisible = false;
         StartCoroutine(FireLaser());
