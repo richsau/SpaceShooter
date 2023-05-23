@@ -19,6 +19,7 @@ public class SpawnManager : MonoBehaviour
     private bool _okToSpawnAmmo = true;
     private GameManager _gameManager;
     private int _enemiesSpawned = 0;
+    private int _enemiesDestroyed = 0;
 
 
     void Start()
@@ -46,10 +47,13 @@ public class SpawnManager : MonoBehaviour
                 SpawnNewEnemy();
             } else
             {
-                _okToSpawn = false;
-                _gameManager.NewLevel();
-                _enemiesSpawned = 0;
-                _okToSpawn = true;
+                if (_enemiesDestroyed == _enemiesSpawned)
+                {
+                    _okToSpawn = false;
+                    _gameManager.NewLevel();
+                    _enemiesSpawned = 0;
+                    _okToSpawn = true;
+                }
             }
             yield return new WaitForSeconds(5f);
         }
@@ -137,6 +141,11 @@ public class SpawnManager : MonoBehaviour
         StartCoroutine(SpawnEnemy());
         StartCoroutine(SpwanPowerUp());
         StartCoroutine(SpawnAsteroid());
+    }
+
+    public void UpdateEnimiesDestroyedCount()
+    {
+        _enemiesDestroyed++;
     }
 }
 

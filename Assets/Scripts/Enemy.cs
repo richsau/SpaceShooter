@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     private Animator _enemyDeathAnim;
     private AudioSource _audioSource;
     private GameManager _gameManager;
+    private SpawnManager _spawnManager;
     private bool _isVisible = false;
     private bool _isDestroyed = false;
     private int _currentXDirection = 0;
@@ -38,6 +39,11 @@ public class Enemy : MonoBehaviour
         if (_gameManager == null)
         {
             Debug.LogError("Could not find GameManager in Enemy.");
+        }
+        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Could not find SpawnManager in Enemy.");
         }
         _isVisible = false;
         StartCoroutine(FireLaser());
@@ -121,6 +127,7 @@ public class Enemy : MonoBehaviour
 
     public void DestroyEnemy()
     {
+        _spawnManager.UpdateEnimiesDestroyedCount();
         _isDestroyed = true;
         _enemyDeathAnim.SetTrigger("OnEnemyDeath");
         _audioSource.Play();
