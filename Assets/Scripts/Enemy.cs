@@ -127,13 +127,16 @@ public class Enemy : MonoBehaviour
 
     public void DestroyEnemy()
     {
-        _spawnManager.UpdateEnimiesDestroyedCount();
-        _isDestroyed = true;
-        _enemyDeathAnim.SetTrigger("OnEnemyDeath");
-        _audioSource.Play();
-        _enemySpeed = 0;
-        Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
-        Destroy(this.gameObject, 2.8f);
+        if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
+        {
+            _isDestroyed = true;
+            _spawnManager.UpdateEnimiesDestroyedCount();
+            _enemyDeathAnim.SetTrigger("OnEnemyDeath");
+            _audioSource.Play();
+            _enemySpeed = 0;
+            Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
+            Destroy(this.gameObject, 2.8f);
+        }
     }
 }
 

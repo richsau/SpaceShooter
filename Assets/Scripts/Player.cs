@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
     private bool _isTrippleShotActive = false;
     private bool _isMegaLaserActive = false;
     private bool _isSpeedActive = false;
+    private bool _isSlowActitve = false;
     private int _shieldLevel = 0;
     private int _score = 0;
     private UIManager _uiManager;
@@ -289,7 +290,7 @@ public class Player : MonoBehaviour
         _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
     }
 
-    public void TrippleShotActive()
+    public void ActivateTrippleShot()
     {
         if (!_isTrippleShotActive) // prevent more than one at a time
         {
@@ -298,7 +299,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void MegaLasertActivate()
+    public void ActivateMegaLaser()
     {
         if (!_isMegaLaserActive) // prevent more than one at a time
         {
@@ -306,6 +307,8 @@ public class Player : MonoBehaviour
             StartCoroutine(MegaLaserCoolDown());
         }
     }
+
+   
 
     IEnumerator LowAmmoCheck()
     {
@@ -350,10 +353,33 @@ public class Player : MonoBehaviour
 
     private void ActivateSpeed()
     {
-        _isSpeedActive = true;
+        if (!_isSlowActitve)
+        {
+            _isSpeedActive = true;
+            _speed *= _speedMultiplier;
+            _thrusterVisual.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); // grow the thruster visual
+            StartCoroutine(SpeedCoolDown());
+        }
+    }
+
+    public void ActivateGoSlow()
+    {
+        if (!_isSpeedActive)
+        {
+            _isSlowActitve = true;
+            _speed /= _speedMultiplier;
+            _thrusterVisual.transform.localScale = new Vector3(0.25f, 1.0f, 1.0f); // shrink the thruster visual
+            StartCoroutine(SlowCoolDown());
+        }
+
+    }
+
+    private IEnumerator SlowCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
         _speed *= _speedMultiplier;
-        _thrusterVisual.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); // grow the thruster visual
-        StartCoroutine(SpeedCoolDown());
+        _isSlowActitve = false;
+        _thrusterVisual.transform.localScale = new Vector3(0.5f, 1.0f, 1.0f); // grow the thruster visual
     }
 
     IEnumerator SpeedCoolDown()
@@ -369,7 +395,7 @@ public class Player : MonoBehaviour
         _thrusterVisual.transform.localScale = new Vector3(0.5f, 1.0f, 1.0f); // shrink the thruster visual
     }
 
-    public void ShieldActive()
+    public void ActivateShield()
     {
          _shieldVisual.SetActive(true);
          _shieldLevel = 3;

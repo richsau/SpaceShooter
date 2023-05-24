@@ -18,7 +18,9 @@ public class SpawnManager : MonoBehaviour
     private bool _okToSpawnMegaLaser = false;
     private bool _okToSpawnAmmo = true;
     private GameManager _gameManager;
+    [SerializeField]
     private int _enemiesSpawned = 0;
+    [SerializeField]
     private int _enemiesDestroyed = 0;
 
 
@@ -52,6 +54,7 @@ public class SpawnManager : MonoBehaviour
                     _okToSpawn = false;
                     _gameManager.NewLevel();
                     _enemiesSpawned = 0;
+                    _enemiesDestroyed = 0;
                     _okToSpawn = true;
                 }
             }
@@ -70,9 +73,9 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpwanPowerUp()
     {
-        while (_okToSpawn == true && _gameManager.GetLevel() > 0)
+        while (_okToSpawn == true)
         {
-            _powerUpType = Random.Range(0, 5);
+            _powerUpType = Random.Range(0, 6);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
             switch(_powerUpType)
