@@ -75,7 +75,10 @@ public class Asteroid : MonoBehaviour
         if (other.tag == "Enemy" && _isVisible)
         {
             Enemy _enemy = other.GetComponent<Enemy>();
-            _enemy.DestroyEnemy();
+            if (_enemy)
+            {
+                _enemy.DestroyEnemy();
+            }
             DestroyAsteroid();
         }
     }

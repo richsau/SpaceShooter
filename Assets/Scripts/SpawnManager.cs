@@ -7,6 +7,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyPrefab;
     [SerializeField]
+    private GameObject _enemyType2Prefab;
+    [SerializeField]
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject _asteroidPrefab;
@@ -18,10 +20,9 @@ public class SpawnManager : MonoBehaviour
     private bool _okToSpawnMegaLaser = false;
     private bool _okToSpawnAmmo = true;
     private GameManager _gameManager;
-    [SerializeField]
     private int _enemiesSpawned = 0;
-    [SerializeField]
     private int _enemiesDestroyed = 0;
+
 
 
     void Start()
@@ -33,6 +34,15 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+   
+    private void SpawnNewEnemyType2()
+    {
+        float randomX = Random.Range(-8.5f, 8.5f);
+        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
+        GameObject newEnemy = Instantiate(_enemyType2Prefab, enemySpawnLocation, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemiesSpawned++;
+    }
 
     IEnumerator SpawnEnemy()
     {
@@ -46,7 +56,13 @@ public class SpawnManager : MonoBehaviour
 
             if (_enemiesSpawned < (level * 5) && (level > 0))
             {
-                SpawnNewEnemy();
+                if (Random.Range(0, 100) < 20)
+                {
+                    SpawnNewEnemyType2();
+                } else
+                {
+                    SpawnNewEnemy();
+                }
             } else
             {
                 if (_enemiesDestroyed == _enemiesSpawned)

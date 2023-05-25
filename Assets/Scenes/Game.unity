@@ -490,6 +490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyPrefab: {fileID: 6437931281697974607, guid: f7768a75ca373f84eac25793ff31013d, type: 3}
+  _enemyType2Prefab: {fileID: 3525315978067446575, guid: 6b44501dfcaabd243aa60ee0bbeca9cf, type: 3}
   _enemyContainer: {fileID: 1854594545}
   _asteroidPrefab: {fileID: 4810224536036288506, guid: 1bc9577944c080045920a4c6310cb185, type: 3}
   _powerupPrefabs:
