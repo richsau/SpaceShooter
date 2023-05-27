@@ -7,10 +7,10 @@ public class PowerUp : MonoBehaviour
     [SerializeField]
     private float _speed = 8.0f;
     [SerializeField]
-    private int powerUpID; // 0 = TrippleShot, 1 = Shield, 2 = Ammo, 3 = Health, 4 = MegaShot, 5 = GoSlow
+    private int powerUpID; // 0 = TripleShot, 1 = Shield, 2 = Ammo, 3 = Health, 4 = MegaShot, 5 = GoSlow
     private AudioSource _audioSource;
     private SpriteRenderer _spriteRenderer;
-
+ 
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
@@ -46,8 +46,8 @@ public class PowerUp : MonoBehaviour
             {
                 switch(powerUpID)
                 {
-                    case 0: // TrippleShot
-                        player.ActivateTrippleShot();
+                    case 0: // TripleShot
+                        player.ActivateTripleShot();
                         break;
                     case 1: // Shield
                         player.ActivateShield();

@@ -14,14 +14,21 @@ public class SpawnManager : MonoBehaviour
     private GameObject _asteroidPrefab;
     [SerializeField]
     private GameObject[] _powerupPrefabs;
+    private int _powerUpRoll;
     private int _powerUpType;
     private bool _okToSpawn = false;
-    private bool _okToSpawnHealth = false;
-    private bool _okToSpawnMegaLaser = false;
-    private bool _okToSpawnAmmo = true;
     private GameManager _gameManager;
     private int _enemiesSpawned = 0;
     private int _enemiesDestroyed = 0;
+    private enum _powerUpTypes
+    {
+        Triple,
+        Shield,
+        Ammo,
+        Health,
+        Mega,
+        GoSlow
+    }
 
 
 
@@ -34,20 +41,23 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-   
-    private void SpawnNewEnemyType2()
+    public void StartSpawning()
     {
-        float randomX = Random.Range(-8.5f, 8.5f);
-        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
-        GameObject newEnemy = Instantiate(_enemyType2Prefab, enemySpawnLocation, Quaternion.identity);
-        newEnemy.transform.parent = _enemyContainer.transform;
-        _enemiesSpawned++;
+        _okToSpawn = true;
+        StartCoroutine(SpawnEnemy());
+        StartCoroutine(SpwanPowerUp());
+        StartCoroutine(SpawnAsteroid());
+    }
+
+    public void StopSpawning()
+    {
+        _okToSpawn = false;
     }
 
     IEnumerator SpawnEnemy()
     {
-        yield return new WaitForSeconds(3.0f);
-        
+        yield return new WaitForSeconds(1.0f);
+
         while (_okToSpawn == true)
         {
             int level;
@@ -56,7 +66,7 @@ public class SpawnManager : MonoBehaviour
 
             if (_enemiesSpawned < (level * 5) && (level > 0))
             {
-                if (Random.Range(0, 100) < 20)
+                if (Random.Range(0, 100) < 5)
                 {
                     SpawnNewEnemyType2();
                 } else
@@ -78,45 +88,45 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    private void SpawnNewEnemy()
-    {
-        float randomX = Random.Range(-8.5f, 8.5f);
-        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
-        GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnLocation, Quaternion.identity);
-        newEnemy.transform.parent = _enemyContainer.transform;
-        _enemiesSpawned++;  
-    }
-
     IEnumerator SpwanPowerUp()
     {
         while (_okToSpawn == true)
         {
-            _powerUpType = Random.Range(0, 6);
+            _powerUpRoll = Random.Range(0, 100);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
-            switch(_powerUpType)
+            if (_powerUpRoll < 19) // 20%
             {
-                case 2:
-                    if (_okToSpawnAmmo)
-                    {
-                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-                    }
-                    break;
-                case 3:
-                    if (_okToSpawnHealth)
-                    {
-                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-                    }
-                    break;
-                case 4:
-                    if (_okToSpawnMegaLaser)
-                    {
-                        Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-                    }
-                    break;
-                default:
-                    Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-                    break;
+                _powerUpType = (int)_powerUpTypes.Triple;
+            } 
+            else if (_powerUpRoll > 19 && _powerUpRoll < 50) // 30%
+            {
+                _powerUpType = (int)_powerUpTypes.Shield;
+            }
+            else if (_powerUpRoll > 49 && _powerUpRoll < 80) // 30%
+            {
+                _powerUpType = (int)_powerUpTypes.Ammo;
+            }
+            else if (_powerUpRoll > 79 && _powerUpRoll < 90) // 10%
+            {
+                _powerUpType = (int)_powerUpTypes.Health;
+            }
+            else if (_powerUpRoll > 89 && _powerUpRoll < 95) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.Mega;
+            }
+            else if (_powerUpRoll > 94) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.GoSlow;
+            }
+            else
+            {
+                Debug.LogError("Unexpected _powerRoll in SpawnManager.");
+            }
+            
+            if (_gameManager.GetLevel() > 0)
+            {
+                Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
             }
             yield return new WaitForSeconds(Random.Range(5, 11));
         }
@@ -134,32 +144,22 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public void StopSpawning()
+    private void SpawnNewEnemy()
     {
-        _okToSpawn = false;
+        float randomX = Random.Range(-8.5f, 8.5f);
+        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
+        GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnLocation, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemiesSpawned++;
     }
 
-    public void SetHealthSpawn(bool OkToSpawn)
+    private void SpawnNewEnemyType2()
     {
-        _okToSpawnHealth = OkToSpawn;
-    }
-
-    public void SetAmmoSpawn(bool OkToSpawn)
-    {
-        _okToSpawnAmmo = OkToSpawn;
-    }
-
-    public void SetMegaLaserSpawn(bool OkToSpawn)
-    {
-        _okToSpawnMegaLaser = OkToSpawn;
-    }
-
-    public void StartSpawning()
-    {
-        _okToSpawn = true;
-        StartCoroutine(SpawnEnemy());
-        StartCoroutine(SpwanPowerUp());
-        StartCoroutine(SpawnAsteroid());
+        float randomX = Random.Range(-8.5f, 8.5f);
+        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
+        GameObject newEnemy = Instantiate(_enemyType2Prefab, enemySpawnLocation, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemiesSpawned++;
     }
 
     public void UpdateEnimiesDestroyedCount()

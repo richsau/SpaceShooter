@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _shieldVisual;
     [SerializeField]
-    private GameObject _laserTrippleShotPrefab;
+    private GameObject _laserTripleShotPrefab;
     [SerializeField]
     private GameObject _laserPrefab;
     [SerializeField]
@@ -30,7 +30,8 @@ public class Player : MonoBehaviour
     private float _canFireAgain = -1f;
     private int _lives = 3;
     private SpawnManager _spawnManager;
-    private bool _isTrippleShotActive = false;
+    private GameManager _gameManager;
+    private bool _isTripleShotActive = false;
     private bool _isMegaLaserActive = false;
     private bool _isSpeedActive = false;
     private bool _isSlowActitve = false;
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
     private int _ammoCount = 15;
     private CameraShake _cameraShake;
     private int _maxAmmo = 20;
+    private bool _playerIsLucky;
     
     // Start is called before the first frame update
     void Start()
@@ -68,13 +70,17 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Could not find UIManager in Player.");
         }
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("Could not find GameManager in Player.");
+        }
         _cameraShake =GameObject.Find("Main Camera").GetComponent<CameraShake>();
         if (_cameraShake == null)
         {
             Debug.LogError("Could not find CameraShake in Player.");
         }
         _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
-        _spawnManager.SetHealthSpawn(false);
         StartCoroutine(SpeedFuelFillUp());
         StartCoroutine(LowAmmoCheck());
         StartCoroutine(PlayerLuckCheck());
@@ -92,16 +98,13 @@ public class Player : MonoBehaviour
         {
             ActivateSpeed();
         }
-        if (Input.GetKeyDown(KeyCode.RightShift)) // TODO: Remove this cheat!
+        if (_gameManager.IsMegaLaserActive())
         {
             _isMegaLaserActive = true;
         }
-        if (_ammoCount < _maxAmmo)
+        else
         {
-            _spawnManager.SetAmmoSpawn(true);
-        } else
-        {
-            _spawnManager.SetAmmoSpawn(false);
+            _isMegaLaserActive = false;
         }
     }
 
@@ -132,9 +135,9 @@ public class Player : MonoBehaviour
         {
             if (_ammoCount > 0)
             {
-                if (_isTrippleShotActive)
+                if (_isTripleShotActive)
                 {
-                    Instantiate(_laserTrippleShotPrefab, transform.position, Quaternion.identity);
+                    Instantiate(_laserTripleShotPrefab, transform.position, Quaternion.identity);
                 }
                 else
                 {
@@ -150,7 +153,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "EnemyLaser")
+        if (other.tag == "EnemyLaser" && !_gameManager.IsSuperPlayer())
         {
             Destroy(other.gameObject);
             _audioSource.clip = _explosionAudioClip;
@@ -158,7 +161,6 @@ public class Player : MonoBehaviour
             Damage();
         }
     }
-
 
     public void DamageToKill()
     {
@@ -204,7 +206,6 @@ public class Player : MonoBehaviour
         
         _lives--;
         _uiManager.UpdateLives(_lives);
-        _spawnManager.SetHealthSpawn(true);
 
         switch (_lives)
         {
@@ -255,7 +256,6 @@ public class Player : MonoBehaviour
                 {
                     _rightWingFire.SetActive(false);
                 }
-                _spawnManager.SetHealthSpawn(true);
                 break;
             case 2: // one wing on fire
                 if (_leftWingOnFire)
@@ -265,10 +265,9 @@ public class Player : MonoBehaviour
                 {
                     _rightWingFire.SetActive(false);
                 }
-                _spawnManager.SetHealthSpawn(false);
                 break;
             default:
-                Debug.LogError("Unexpected lives count in Player.AddHealth");
+                Debug.Log("No impact in lives count in Player.AddHealth");
                 break;
         }
         if (_lives < 3)
@@ -290,12 +289,12 @@ public class Player : MonoBehaviour
         _uiManager.UpdateAmmo(_ammoCount, _maxAmmo);
     }
 
-    public void ActivateTrippleShot()
+    public void ActivateTripleShot()
     {
-        if (!_isTrippleShotActive) // prevent more than one at a time
+        if (!_isTripleShotActive) // prevent more than one at a time
         {
-            _isTrippleShotActive = true;
-            StartCoroutine(TrippleShotCoolDown());
+            _isTripleShotActive = true;
+            StartCoroutine(TripleShotCoolDown());
         }
     }
 
@@ -327,10 +326,10 @@ public class Player : MonoBehaviour
     }
 
 
-    IEnumerator TrippleShotCoolDown()
+    IEnumerator TripleShotCoolDown()
     {
         yield return new WaitForSeconds(5f);
-        _isTrippleShotActive = false;
+        _isTripleShotActive = false;
     }
 
     IEnumerator MegaLaserCoolDown()
@@ -345,7 +344,11 @@ public class Player : MonoBehaviour
         {
             if (Random.Range(0, 100) < 5)  
             {
-                _spawnManager.SetMegaLaserSpawn(true);
+                _playerIsLucky = true;
+            }
+            else
+            {
+                _playerIsLucky = false;
             }
             yield return new WaitForSeconds(10f);
         }
@@ -408,6 +411,10 @@ public class Player : MonoBehaviour
         _uiManager.UpdateScore(_score);
     }
 
+    public bool IsPlayerLucky()
+    {
+        return _playerIsLucky;
+    }
     IEnumerator SpeedFuelFillUp()
     {
         while (true)

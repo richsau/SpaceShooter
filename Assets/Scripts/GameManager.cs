@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private int _level = 0;
     private UIManager _uiManager;
+    private bool _isSuperPlayer = false;
+    private bool _isMegaLaserActive = false;
 
 
     public void Start()
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        int goTOLevel = 0;
+
         if (_isGameOver && Input.GetKeyDown(KeyCode.Alpha1))
         {
             SceneManager.LoadScene(1); // load the game
@@ -36,6 +40,64 @@ public class GameManager : MonoBehaviour
         {
             QuitApplication();
         }
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SceneManager.LoadScene(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            goTOLevel = 2;
+        } 
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            goTOLevel = 3;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            goTOLevel = 4;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            goTOLevel = 5;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            goTOLevel = 6;
+        }
+        else if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (_isSuperPlayer)
+            {
+                Debug.Log("Turning OFF SuperPlayer");
+                _isSuperPlayer = false;
+            }
+            else
+            {
+                Debug.Log("Turning ON SuperPlayer");
+                _isSuperPlayer = true;
+            }      
+        }
+        else if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            if (_isMegaLaserActive)
+            {
+                Debug.Log("Turning OFF MegaLaser");
+                _isMegaLaserActive = false;
+            } 
+            else
+            {
+                Debug.Log("Turing ON MegaLaser");
+                _isMegaLaserActive = true;
+            }
+        }
+
+        if (goTOLevel != 0)
+        {
+            Debug.Log("Switching to level: " + goTOLevel);
+            SetLevel(goTOLevel);
+        }
+#endif
     }
 
 public void QuitApplication()
@@ -61,4 +123,21 @@ public void QuitApplication()
         _level++;
         _uiManager.UpdateLevel(_level);
     }
+
+    public bool IsSuperPlayer()
+    {
+        return _isSuperPlayer;
+    }
+
+    public bool IsMegaLaserActive()
+    {
+        return _isMegaLaserActive;
+    }
+
+    private void SetLevel(int level)
+    {
+        _level = level;
+        _uiManager.UpdateLevel(_level);
+    }
+
 }

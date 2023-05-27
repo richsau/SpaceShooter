@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && _isVisible)
+        if (other.tag == "Player" && _isVisible && !_gameManager.IsSuperPlayer())
         {
             Player player = other.GetComponent<Player>();
             if (player != null)

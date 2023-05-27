@@ -10,6 +10,7 @@ public class Asteroid : MonoBehaviour
     private float _speed = 10.0f;
     private Player _player;
     private SpawnManager _spawnManager;
+    private GameManager _gameManager;
     private int _rotateDirection;
     private bool _isVisible = false;
 
@@ -26,6 +27,11 @@ public class Asteroid : MonoBehaviour
         if (_spawnManager == null)
         {
             Debug.LogError("SpawnManager could not be found in Asteroid.");
+        }
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("GameManager could not be found in Asteroid.");
         }
         _rotateDirection = Random.Range(-1, 2);
         _isVisible = false;
@@ -53,7 +59,7 @@ public class Asteroid : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && _isVisible)
+        if (other.tag == "Player" && _isVisible && !_gameManager.IsSuperPlayer())
         {
             if (_player != null)
             {
