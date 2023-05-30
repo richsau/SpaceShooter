@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private int _level = 0;
     private UIManager _uiManager;
     private bool _isSuperPlayer = false;
-    private bool _isMegaLaserActive = false;
+    //private bool _isMegaLaserActive = false;
 
 
     public void Start()
@@ -78,20 +78,7 @@ public class GameManager : MonoBehaviour
                 _isSuperPlayer = true;
             }      
         }
-        else if (Input.GetKeyDown(KeyCode.RightShift))
-        {
-            if (_isMegaLaserActive)
-            {
-                Debug.Log("Turning OFF MegaLaser");
-                _isMegaLaserActive = false;
-            } 
-            else
-            {
-                Debug.Log("Turing ON MegaLaser");
-                _isMegaLaserActive = true;
-            }
-        }
-
+        
         if (goTOLevel != 0)
         {
             Debug.Log("Switching to level: " + goTOLevel);
@@ -129,10 +116,10 @@ public void QuitApplication()
         return _isSuperPlayer;
     }
 
-    public bool IsMegaLaserActive()
-    {
-        return _isMegaLaserActive;
-    }
+    //public bool IsMegaLaserActive()
+    //{
+    //    return _isMegaLaserActive;
+    //}
 
     private void SetLevel(int level)
     {

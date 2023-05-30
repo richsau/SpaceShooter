@@ -95,7 +95,7 @@ public class SpawnManager : MonoBehaviour
             _powerUpRoll = Random.Range(0, 100);
             float randomX = Random.Range(-8.5f, 8.5f);
             Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
-            if (_powerUpRoll < 19) // 20%
+            if (_powerUpRoll < 20) // 20%
             {
                 _powerUpType = (int)_powerUpTypes.Triple;
             } 
@@ -121,7 +121,7 @@ public class SpawnManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Unexpected _powerRoll in SpawnManager.");
+                Debug.LogError("Unexpected _powerUpRoll in SpawnManager: " + _powerUpRoll);
             }
             
             if (_gameManager.GetLevel() > 0)

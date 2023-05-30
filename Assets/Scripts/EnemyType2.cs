@@ -8,6 +8,8 @@ public class EnemyType2 : MonoBehaviour
     private GameObject _enemyMinePrefab;
     [SerializeField]
     private GameObject _explosionPrefab;
+    [SerializeField]
+    private GameObject _shieldVisual;
     private float _enemySpeed = 3.0f;
     private Player _player;
     private AudioSource _audioSource;
@@ -19,6 +21,7 @@ public class EnemyType2 : MonoBehaviour
     private float _maxX = 9.7f;
     private float _minX = -9.7f;
     private Vector3 _fireDestination;
+    private bool _shieldUsed = false;
 
 
     private void Start()
@@ -46,13 +49,21 @@ public class EnemyType2 : MonoBehaviour
         _isVisible = false;
         StartCoroutine(LayMine());
         StartCoroutine(ChangeDirections());
-
+        StartCoroutine(ShieldManager());
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
+        if ((Vector3.Distance(transform.position, _player.transform.position) < 3.5f) && _shieldVisual.activeSelf)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _enemySpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
+        }
+        
         if (transform.position.x > _maxX)
         {
             _currentXDirection = -1;
@@ -123,17 +134,47 @@ public class EnemyType2 : MonoBehaviour
         }
     }
 
+    IEnumerator ShieldManager()
+    {
+        while (true)
+        {
+            if(Random.Range(0, 100) < 10)
+            {
+                ActivateShield();
+            }
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    private void ActivateShield()
+    {
+        if (!_shieldUsed)
+        {
+            _shieldUsed = true;
+            _shieldVisual.SetActive(true);
+        }
+    }
+
     public void DestroyEnemy()
     {
-        if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
+        if (!_shieldVisual.activeSelf)
         {
-            _isDestroyed = true;
-            _spawnManager.UpdateEnimiesDestroyedCount();
+            if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
+            {
+                _isDestroyed = true;
+                _spawnManager.UpdateEnimiesDestroyedCount();
+                GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+                _audioSource.Play();
+                _enemySpeed = 0;
+                Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
+                Destroy(this.gameObject);
+            }
+        }
+        else
+        {
             GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             _audioSource.Play();
-            _enemySpeed = 0;
-            Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
-            Destroy(this.gameObject);
+            _shieldVisual.SetActive(false);
         }
     }
 }

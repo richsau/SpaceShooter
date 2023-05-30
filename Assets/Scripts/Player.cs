@@ -98,14 +98,6 @@ public class Player : MonoBehaviour
         {
             ActivateSpeed();
         }
-        if (_gameManager.IsMegaLaserActive())
-        {
-            _isMegaLaserActive = true;
-        }
-        else
-        {
-            _isMegaLaserActive = false;
-        }
     }
 
     void MovePlayer()
@@ -333,8 +325,8 @@ public class Player : MonoBehaviour
     }
 
     IEnumerator MegaLaserCoolDown()
-    {
-        yield return new WaitForSeconds(5f);
+    { 
+        yield return new WaitForSeconds(5f); 
         _isMegaLaserActive = false;
     }
 

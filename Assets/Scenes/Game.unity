@@ -161,7 +161,7 @@ MonoBehaviour:
   _rightWingFire: {fileID: 566791230}
   _leftWingFire: {fileID: 28734676}
   _shieldVisual: {fileID: 344959158}
-  _laserTrippleShotPrefab: {fileID: 2763291010317197543, guid: 1ea094b976364e24f8175cb3b472b785, type: 3}
+  _laserTripleShotPrefab: {fileID: 2763291010317197543, guid: 1ea094b976364e24f8175cb3b472b785, type: 3}
   _laserPrefab: {fileID: 326174805065554657, guid: a3314d5d091c92442a979583c8f3205f, type: 3}
   _thrusterVisual: {fileID: 510516330}
   _megaLaserPrefab: {fileID: 9222885365715584288, guid: b98c83dbf0382284c81a67d155f0117b, type: 3}
