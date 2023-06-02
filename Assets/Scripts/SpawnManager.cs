@@ -14,6 +14,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject _asteroidPrefab;
     [SerializeField]
     private GameObject[] _powerupPrefabs;
+    List<GameObject> _powerupBucket = new List<GameObject>();
+    //List<GameObject> _powerupBucket;// = GameObject List<GameObject>();
     private int _powerUpRoll;
     private int _powerUpType;
     private bool _okToSpawn = false;
@@ -57,35 +59,39 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnEnemy()
     {
         yield return new WaitForSeconds(1.0f);
+        SpawnNewEnemyType2();
+        _okToSpawn = true;
+        _gameManager.NewLevel();
+        //while (_okToSpawn == true)
+        //{
+        //    int level;
 
-        while (_okToSpawn == true)
-        {
-            int level;
+        //    level = _gameManager.GetLevel();
 
-            level = _gameManager.GetLevel();
-
-            if (_enemiesSpawned < (level * 5) && (level > 0))
-            {
-                if (Random.Range(0, 100) < 5)
-                {
-                    SpawnNewEnemyType2();
-                } else
-                {
-                    SpawnNewEnemy();
-                }
-            } else
-            {
-                if (_enemiesDestroyed == _enemiesSpawned)
-                {
-                    _okToSpawn = false;
-                    _gameManager.NewLevel();
-                    _enemiesSpawned = 0;
-                    _enemiesDestroyed = 0;
-                    _okToSpawn = true;
-                }
-            }
-            yield return new WaitForSeconds(5f);
-        }
+        //    if (_enemiesSpawned < (level * 5) && (level > 0))
+        //    {
+        //        if (Random.Range(0, 100) < 5)
+        //        {
+        //            SpawnNewEnemyType2();
+        //        }
+        //        else
+        //        {
+        //            SpawnNewEnemy();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (_enemiesDestroyed == _enemiesSpawned)
+        //        {
+        //            _okToSpawn = false;
+        //            _gameManager.NewLevel();
+        //            _enemiesSpawned = 0;
+        //            _enemiesDestroyed = 0;
+        //            _okToSpawn = true;
+        //        }
+        //    }
+        //    yield return new WaitForSeconds(5f);
+        //}
     }
 
     IEnumerator SpwanPowerUp()
@@ -126,7 +132,8 @@ public class SpawnManager : MonoBehaviour
             
             if (_gameManager.GetLevel() > 0)
             {
-                Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                GameObject NewPowerup = Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                _powerupBucket.Add(NewPowerup);
             }
             yield return new WaitForSeconds(Random.Range(5, 11));
         }
@@ -165,6 +172,26 @@ public class SpawnManager : MonoBehaviour
     public void UpdateEnimiesDestroyedCount()
     {
         _enemiesDestroyed++;
+    }
+
+    public void RemovePowerupFromBucket(GameObject powerup)
+    {
+        _powerupBucket.Remove(powerup);
+    }
+
+    public GameObject CheckPowerUpDistance(GameObject target, float distance)
+    {
+        foreach (GameObject powerUp in _powerupBucket)
+        {
+            if (target && powerUp)
+            {
+                if (Vector3.Distance(powerUp.transform.position, target.transform.position) < distance)
+                {
+                    return powerUp;
+                }
+            }
+        }
+        return null;
     }
 }
 

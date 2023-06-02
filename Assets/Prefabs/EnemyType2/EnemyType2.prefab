@@ -245,6 +245,8 @@ MonoBehaviour:
   _enemyMinePrefab: {fileID: 7431917206906546683, guid: 1c532a2d59bdf434eb005a1ef15a0598, type: 3}
   _explosionPrefab: {fileID: 2203324660167331724, guid: a744d0e5fbca53c459432dc4c126ef9a, type: 3}
   _shieldVisual: {fileID: 4615803220428134119}
+  _enemyLaserTargetPlayerPrefab: {fileID: 5405386767373833141, guid: 500a8ee3efa57d5438d90379598a33df, type: 3}
+  _enemyLaserTargetPowerupPrefab: {fileID: 3429798343339505183, guid: 63ce559f1db3e2e4d9f07a53582e70c9, type: 3}
 --- !u!1 &4615803220428134119
 GameObject:
   m_ObjectHideFlags: 0

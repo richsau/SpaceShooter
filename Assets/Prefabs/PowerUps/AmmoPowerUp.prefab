@@ -147,6 +147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   powerUpID: 2
+  _explosionPrefab: {fileID: 418190709180122551, guid: eb5380d9267335c42a0cc6fc6fc301c4, type: 3}
+  _explosionAudioClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
 --- !u!82 &6626521733850914843
 AudioSource:
   m_ObjectHideFlags: 0

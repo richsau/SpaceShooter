@@ -10,6 +10,10 @@ public class EnemyType2 : MonoBehaviour
     private GameObject _explosionPrefab;
     [SerializeField]
     private GameObject _shieldVisual;
+    [SerializeField]
+    private GameObject _enemyLaserTargetPlayerPrefab;
+    [SerializeField]
+    private GameObject _enemyLaserTargetPowerupPrefab;
     private float _enemySpeed = 3.0f;
     private Player _player;
     private AudioSource _audioSource;
@@ -22,6 +26,8 @@ public class EnemyType2 : MonoBehaviour
     private float _minX = -9.7f;
     private Vector3 _fireDestination;
     private bool _shieldUsed = false;
+    private GameObject _targetPowerup;
+
 
 
     private void Start()
@@ -50,15 +56,23 @@ public class EnemyType2 : MonoBehaviour
         StartCoroutine(LayMine());
         StartCoroutine(ChangeDirections());
         StartCoroutine(ShieldManager());
+        StartCoroutine(FireLaser());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if ((Vector3.Distance(transform.position, _player.transform.position) < 3.5f) && _shieldVisual.activeSelf)
+        if (_player)
         {
-            transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _enemySpeed * Time.deltaTime);
-        }
+            if ((Vector3.Distance(transform.position, _player.transform.position) < 3.5f) && _shieldVisual.activeSelf)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _enemySpeed * Time.deltaTime);
+            }
+            else
+            {
+                transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
+            }
+        } 
         else
         {
             transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
@@ -74,14 +88,17 @@ public class EnemyType2 : MonoBehaviour
             _currentXDirection = 1;
         }
 
-        if (transform.position.y < 7.44)
+        if (transform.position.y < -4.6 || transform.position.y > 7)
+        {
+            _isVisible = false;
+        }
+        else
         {
             _isVisible = true;
         }
 
         if (transform.position.y < -5.5)
         {
-            _isVisible = false;
             float randomX = Random.Range(_minX, _maxX);
             transform.position = new Vector3(randomX, 7.5f, 0);
         }
@@ -107,6 +124,29 @@ public class EnemyType2 : MonoBehaviour
                 _player.AddToScore(10);
             }
             DestroyEnemy();
+        }
+    }
+
+    IEnumerator FireLaser()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(1, 7));
+            if (_isVisible && !_isDestroyed)
+            {
+                if ((_player.transform.position.y > transform.position.y) && (transform.position.y < -3))
+                {
+                    Instantiate(_enemyLaserTargetPlayerPrefab, transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    _targetPowerup = _spawnManager.CheckPowerUpDistance(this.gameObject, 10f);
+                    if (_targetPowerup)
+                    {
+                        Instantiate(_enemyLaserTargetPowerupPrefab, transform.position, Quaternion.identity);
+                    }
+                }
+            }
         }
     }
 

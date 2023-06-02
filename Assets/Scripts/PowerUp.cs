@@ -8,8 +8,14 @@ public class PowerUp : MonoBehaviour
     private float _speed = 8.0f;
     [SerializeField]
     private int powerUpID; // 0 = TripleShot, 1 = Shield, 2 = Ammo, 3 = Health, 4 = MegaShot, 5 = GoSlow
+    [SerializeField]
+    private GameObject _explosionPrefab;
+    [SerializeField]
+    private AudioClip _explosionAudioClip;
+
     private AudioSource _audioSource;
     private SpriteRenderer _spriteRenderer;
+    private SpawnManager _spawnManager;
  
     private void Start()
     {
@@ -23,6 +29,11 @@ public class PowerUp : MonoBehaviour
         {
             Debug.LogError("Count not find SpriteRenderer in PowerUp.");
         }
+        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Could not find SpawnManager in PowerUp.");
+        }
     }
 
     void Update()
@@ -33,6 +44,7 @@ public class PowerUp : MonoBehaviour
 
         if (transform.position.y < -6.45)
         {
+            _spawnManager.RemovePowerupFromBucket(this.gameObject);
             Destroy(this.gameObject);
         }
     }
@@ -44,7 +56,7 @@ public class PowerUp : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                switch(powerUpID)
+                switch (powerUpID)
                 {
                     case 0: // TripleShot
                         player.ActivateTripleShot();
@@ -71,6 +83,15 @@ public class PowerUp : MonoBehaviour
             }
             _audioSource.Play();
             _spriteRenderer.enabled = false;
+            StartCoroutine(DestroyCoolDown());
+        }
+        else if (other.tag == "EnemyLaser" && _spriteRenderer.enabled)
+        {
+            GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            _audioSource.clip = _explosionAudioClip;
+            _audioSource.Play();
+            _spriteRenderer.enabled = false;
+            Destroy(other.transform.gameObject);
             StartCoroutine(DestroyCoolDown());
         }
     }
