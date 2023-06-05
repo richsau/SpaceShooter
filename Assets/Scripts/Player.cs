@@ -98,6 +98,10 @@ public class Player : MonoBehaviour
         {
             ActivateSpeed();
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ActivatePowerupZoom();
+        }
     }
 
     void MovePlayer()
@@ -345,6 +349,19 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(10f);
         }
     }
+
+    private void ActivatePowerupZoom()
+    {
+        PowerUp targetPowerup;
+
+        GameObject target = _spawnManager.CheckPowerUpDistance(this.gameObject, 10f);
+        if (target)
+        {
+            targetPowerup = GameObject.FindObjectOfType<PowerUp>(target);
+            targetPowerup.ZoomToPlayer();
+        }
+    }
+
 
     private void ActivateSpeed()
     {

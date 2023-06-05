@@ -16,6 +16,8 @@ public class PowerUp : MonoBehaviour
     private AudioSource _audioSource;
     private SpriteRenderer _spriteRenderer;
     private SpawnManager _spawnManager;
+    private Player _player;
+    private bool _zoomToPlayer = false;
  
     private void Start()
     {
@@ -34,18 +36,31 @@ public class PowerUp : MonoBehaviour
         {
             Debug.LogError("Could not find SpawnManager in PowerUp.");
         }
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Could not find Player in PowerUp.");
+        }
     }
 
     void Update()
     {
-        Vector3 powerUpMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
-
-        transform.Translate(powerUpMovement);
-
-        if (transform.position.y < -6.45)
+        if (_zoomToPlayer && _player)
         {
-            _spawnManager.RemovePowerupFromBucket(this.gameObject);
-            Destroy(this.gameObject);
+            transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _speed * Time.deltaTime * 2);
+        }
+        else
+        {
+
+            Vector3 powerUpMovement = new Vector3(0, -1, 0) * _speed * Time.deltaTime;
+
+            transform.Translate(powerUpMovement);
+
+            if (transform.position.y < -6.45)
+            {
+                _spawnManager.RemovePowerupFromBucket(this.gameObject);
+                Destroy(this.gameObject);
+            }
         }
     }
 
@@ -100,5 +115,10 @@ public class PowerUp : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         Destroy(this.gameObject);
+    }
+
+    public void ZoomToPlayer()
+    {
+        _zoomToPlayer = true;
     }
 }
