@@ -15,6 +15,9 @@ TagManager:
   - HealthPowerUp
   - MegaLaserPowerUp
   - GoSlowPowerUp
+  - Missile
+  - LaserRoute
+  - MissilePowerUp
   layers:
   - Default
   - TransparentFX

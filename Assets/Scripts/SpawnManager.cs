@@ -15,7 +15,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _powerupPrefabs;
     List<GameObject> _powerupBucket = new List<GameObject>();
-    //List<GameObject> _powerupBucket;// = GameObject List<GameObject>();
+    List<GameObject> _enemyBucket = new List<GameObject>();
     private int _powerUpRoll;
     private int _powerUpType;
     private bool _okToSpawn = false;
@@ -29,7 +29,8 @@ public class SpawnManager : MonoBehaviour
         Ammo,
         Health,
         Mega,
-        GoSlow
+        GoSlow,
+        Missile
     }
 
 
@@ -58,40 +59,40 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnEnemy()
     {
-        yield return new WaitForSeconds(1.0f);
-        SpawnNewEnemyType2();
-        _okToSpawn = true;
-        _gameManager.NewLevel();
-        //while (_okToSpawn == true)
-        //{
-        //    int level;
+        //yield return new WaitForSeconds(1.0f);
+        //SpawnNewEnemyType2();
+        //_okToSpawn = true;
+        //_gameManager.NewLevel();
+        while (_okToSpawn == true)
+        {
+            int level;
 
-        //    level = _gameManager.GetLevel();
+            level = _gameManager.GetLevel();
 
-        //    if (_enemiesSpawned < (level * 5) && (level > 0))
-        //    {
-        //        if (Random.Range(0, 100) < 5)
-        //        {
-        //            SpawnNewEnemyType2();
-        //        }
-        //        else
-        //        {
-        //            SpawnNewEnemy();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (_enemiesDestroyed == _enemiesSpawned)
-        //        {
-        //            _okToSpawn = false;
-        //            _gameManager.NewLevel();
-        //            _enemiesSpawned = 0;
-        //            _enemiesDestroyed = 0;
-        //            _okToSpawn = true;
-        //        }
-        //    }
-        //    yield return new WaitForSeconds(5f);
-        //}
+            if (_enemiesSpawned < (level * 5) && (level > 0))
+            {
+                if (Random.Range(0, 100) < 5)
+                {
+                    SpawnNewEnemyType2();
+                }
+                else
+                {
+                    SpawnNewEnemy();
+                }
+            }
+            else
+            {
+                if (_enemiesDestroyed == _enemiesSpawned)
+                {
+                    _okToSpawn = false;
+                    _gameManager.NewLevel();
+                    _enemiesSpawned = 0;
+                    _enemiesDestroyed = 0;
+                    _okToSpawn = true;
+                }
+            }
+            yield return new WaitForSeconds(5f);
+        }
     }
 
     IEnumerator SpwanPowerUp()
@@ -113,9 +114,13 @@ public class SpawnManager : MonoBehaviour
             {
                 _powerUpType = (int)_powerUpTypes.Ammo;
             }
-            else if (_powerUpRoll > 79 && _powerUpRoll < 90) // 10%
+            else if (_powerUpRoll > 79 && _powerUpRoll < 85) // 5%
             {
                 _powerUpType = (int)_powerUpTypes.Health;
+            }
+            else if (_powerUpRoll > 84 && _powerUpRoll < 90) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.Missile;
             }
             else if (_powerUpRoll > 89 && _powerUpRoll < 95) // 5%
             {
@@ -157,6 +162,7 @@ public class SpawnManager : MonoBehaviour
         Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
         GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnLocation, Quaternion.identity);
         newEnemy.transform.parent = _enemyContainer.transform;
+        _enemyBucket.Add(newEnemy);
         _enemiesSpawned++;
     }
 
@@ -166,13 +172,41 @@ public class SpawnManager : MonoBehaviour
         Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
         GameObject newEnemy = Instantiate(_enemyType2Prefab, enemySpawnLocation, Quaternion.identity);
         newEnemy.transform.parent = _enemyContainer.transform;
+        _enemyBucket.Add(newEnemy);
         _enemiesSpawned++;
+    }
+
+    public GameObject FindMissileTarget(GameObject missile)
+    {
+        float currentDistance = 1000f;
+        float newDistance;
+        GameObject currentTarget = null;
+
+        foreach (GameObject enemy in _enemyBucket)
+        {
+            if (missile && enemy)
+            {
+                newDistance = Vector3.Distance(missile.transform.position, enemy.transform.position);
+                if (newDistance < currentDistance)
+                {
+                    currentTarget = enemy;
+                    currentDistance = newDistance;
+                }
+            }
+        }
+        return currentTarget;
     }
 
     public void UpdateEnimiesDestroyedCount()
     {
         _enemiesDestroyed++;
     }
+
+    public void RemoveEnemyFromBucket(GameObject enemy)
+    {
+        _enemyBucket.Remove(enemy);
+    }
+
 
     public void RemovePowerupFromBucket(GameObject powerup)
     {

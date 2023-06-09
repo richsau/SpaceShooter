@@ -90,7 +90,7 @@ public class Enemy : MonoBehaviour
             DestroyEnemy();
         }
 
-        if (other.tag == "Laser" && _isVisible)
+        if (((other.tag == "Laser") || (other.tag == "Missile")) && _isVisible)
         {
             Destroy(other.gameObject);
             if (_player != null)
@@ -129,6 +129,7 @@ public class Enemy : MonoBehaviour
     {
         if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
         {
+            _spawnManager.RemoveEnemyFromBucket(this.gameObject);
             _isDestroyed = true;
             _spawnManager.UpdateEnimiesDestroyedCount();
             _enemyDeathAnim.SetTrigger("OnEnemyDeath");

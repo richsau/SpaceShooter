@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _ammoCountText;
     [SerializeField]
+    private TMP_Text _missileReadyText;
+    [SerializeField]
     private TMP_Text _gameOverText;
     [SerializeField]
     private TMP_Text _playerMessageText;
@@ -69,6 +71,24 @@ public class UIManager : MonoBehaviour
             _ammoCountText.gameObject.SetActive(true);
         }
     }
+
+    public void BlinkMissileReadyText()
+    {
+        if (_missileReadyText.IsActive())
+        {
+            _missileReadyText.gameObject.SetActive(false);
+        }
+        else
+        {
+            _missileReadyText.gameObject.SetActive(true);
+        }
+    }
+
+    public void DisableMissileReadyText()
+    {
+        _missileReadyText.gameObject.SetActive(false);
+    }
+
 
     public void DisplayAmmoText()
     {

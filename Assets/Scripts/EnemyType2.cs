@@ -116,7 +116,7 @@ public class EnemyType2 : MonoBehaviour
             DestroyEnemy();
         }
 
-        if (other.tag == "Laser" && _isVisible)
+        if (((other.tag == "Laser") || (other.tag == "Missile")) && _isVisible)
         {
             Destroy(other.gameObject);
             if (_player != null)
@@ -124,6 +124,19 @@ public class EnemyType2 : MonoBehaviour
                 _player.AddToScore(10);
             }
             DestroyEnemy();
+        }
+
+        if (other.tag == "LaserRoute" && _isVisible)
+        {
+            if (transform.position.x < 0)
+            {
+                _currentXDirection = 1;
+            }
+            else
+            {
+                _currentXDirection = -1;
+            }
+            StartCoroutine(SpeedBurst());
         }
     }
 
@@ -186,6 +199,14 @@ public class EnemyType2 : MonoBehaviour
         }
     }
 
+    IEnumerator SpeedBurst()
+    {
+        _enemySpeed *= 2;
+        yield return new WaitForSeconds(1);
+        _enemySpeed /= 2;
+    }
+
+
     private void ActivateShield()
     {
         if (!_shieldUsed)
@@ -201,6 +222,7 @@ public class EnemyType2 : MonoBehaviour
         {
             if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
             {
+                _spawnManager.RemoveEnemyFromBucket(this.gameObject);
                 _isDestroyed = true;
                 _spawnManager.UpdateEnimiesDestroyedCount();
                 GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);

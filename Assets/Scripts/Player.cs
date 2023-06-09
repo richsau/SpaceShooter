@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserAudioClip;
     [SerializeField]
+    private AudioClip _missileAudioClip;
+    [SerializeField]
     private AudioClip _explosionAudioClip;
     [SerializeField]
     private GameObject _rightWingFire;
@@ -24,6 +26,8 @@ public class Player : MonoBehaviour
     private GameObject _thrusterVisual;
     [SerializeField]
     private GameObject _megaLaserPrefab;
+    [SerializeField]
+    private GameObject _missilePrefab;
     private float _speed = 3.5f;
     private float _speedMultiplier = 2f;
     private float _cooldownTime = 0.15f; 
@@ -45,7 +49,8 @@ public class Player : MonoBehaviour
     private CameraShake _cameraShake;
     private int _maxAmmo = 20;
     private bool _playerIsLucky;
-    
+    private bool _missileAvailable = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -102,6 +107,13 @@ public class Player : MonoBehaviour
         {
             ActivatePowerupZoom();
         }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            if (_missileAvailable)
+            {
+                FireMissile();
+            }
+        }
     }
 
     void MovePlayer()
@@ -144,8 +156,17 @@ public class Player : MonoBehaviour
                 _audioSource.Play();
             }
         }
-
     }
+
+    void FireMissile()
+    {
+        _audioSource.clip = _missileAudioClip;
+        _missileAvailable = false;
+        _uiManager.DisableMissileReadyText();
+        Instantiate(_missilePrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
+        _audioSource.Play();
+    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -303,7 +324,14 @@ public class Player : MonoBehaviour
         }
     }
 
-   
+    IEnumerator MissileReady()
+    {
+        while (_missileAvailable)
+        {
+            _uiManager.BlinkMissileReadyText();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
 
     IEnumerator LowAmmoCheck()
     {
@@ -372,6 +400,12 @@ public class Player : MonoBehaviour
             _thrusterVisual.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); // grow the thruster visual
             StartCoroutine(SpeedCoolDown());
         }
+    }
+
+    public void ActivateMissile()
+    {
+        _missileAvailable = true;
+        StartCoroutine(MissileReady());
     }
 
     public void ActivateGoSlow()
