@@ -13,6 +13,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _asteroidPrefab;
     [SerializeField]
+    private GameObject _bossPrefab;
+    [SerializeField]
     private GameObject[] _powerupPrefabs;
     List<GameObject> _powerupBucket = new List<GameObject>();
     List<GameObject> _enemyBucket = new List<GameObject>();
@@ -22,6 +24,7 @@ public class SpawnManager : MonoBehaviour
     private GameManager _gameManager;
     private int _enemiesSpawned = 0;
     private int _enemiesDestroyed = 0;
+    private bool _bossSpawned = false;
     private enum _powerUpTypes
     {
         Triple,
@@ -69,7 +72,15 @@ public class SpawnManager : MonoBehaviour
 
             level = _gameManager.GetLevel();
 
-            if (_enemiesSpawned < (level * 5) && (level > 0))
+            if ((level % 5 == 0) && (level > 0))
+            {
+                if (!_bossSpawned)
+                {
+                    SpawnBoss();
+                    _bossSpawned = true;
+                }
+            } 
+            else if (_enemiesSpawned < (level * 5) && (level > 0))
             {
                 if (Random.Range(0, 100) < 5)
                 {
@@ -85,6 +96,7 @@ public class SpawnManager : MonoBehaviour
                 if (_enemiesDestroyed == _enemiesSpawned)
                 {
                     _okToSpawn = false;
+                    _bossSpawned = false;
                     _gameManager.NewLevel();
                     _enemiesSpawned = 0;
                     _enemiesDestroyed = 0;
@@ -175,6 +187,17 @@ public class SpawnManager : MonoBehaviour
         _enemyBucket.Add(newEnemy);
         _enemiesSpawned++;
     }
+
+    private void SpawnBoss()
+    {
+        float randomX = Random.Range(-8.5f, 8.5f);
+        Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
+        GameObject newEnemy = Instantiate(_bossPrefab, enemySpawnLocation, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemyBucket.Add(newEnemy);
+        _enemiesSpawned++;
+    }
+
 
     public GameObject FindMissileTarget(GameObject missile)
     {

@@ -18,6 +18,13 @@ TagManager:
   - Missile
   - LaserRoute
   - MissilePowerUp
+  - Mov0
+  - Mov1
+  - Mov2
+  - Mov3
+  - Mov4
+  - Mov5
+  - Mov6
   layers:
   - Default
   - TransparentFX
