@@ -19,6 +19,7 @@ public class Boss : MonoBehaviour
     private int _numGuns = 10;
     private bool _isDestroyed = false;
     private AudioSource _audioSource;
+    private CameraShake _cameraShake;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,11 @@ public class Boss : MonoBehaviour
         {
             Debug.LogError("AudioSource could not be found in Boss.");
         }
+        _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        if (_cameraShake == null)
+        {
+            Debug.LogError("Could not find CameraShake in Player.");
+        }
     }
 
     // Update is called once per frame
@@ -48,21 +54,6 @@ public class Boss : MonoBehaviour
             _movIndex = Random.Range(0, 7);
         }
     }
-
-    //private void DestroyBoss()
-    //{
-    //    _isDestroyed = true;
-    //    speed = 0;
-    //    foreach (Transform T in _destroyPoints)
-    //    {
-    //        Instantiate(_explosionPrefab, T.position, Quaternion.identity);
-    //        _audioSource.Play();
-    //    }
-    //    Instantiate(_bigExplosionPrefab, transform.position, Quaternion.identity);
-    //    Destroy(this.gameObject);
-
-    //}
-
 
     public void GunDestroyed()
     {
@@ -84,10 +75,10 @@ public class Boss : MonoBehaviour
         {
             Instantiate(_explosionPrefab, T.position, Quaternion.identity);
             _audioSource.Play();
+            _cameraShake.StartCameraShake();
             yield return new WaitForSeconds(Random.Range(0.3f, 0.5f));
         }
         Instantiate(_bigExplosionPrefab, transform.position, Quaternion.identity);
         Destroy(this.gameObject);
     }
-
 }

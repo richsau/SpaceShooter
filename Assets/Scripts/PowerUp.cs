@@ -12,7 +12,6 @@ public class PowerUp : MonoBehaviour
     private GameObject _explosionPrefab;
     [SerializeField]
     private AudioClip _explosionAudioClip;
-
     private AudioSource _audioSource;
     private SpriteRenderer _spriteRenderer;
     private SpawnManager _spawnManager;

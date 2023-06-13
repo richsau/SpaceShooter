@@ -89,7 +89,6 @@ public class UIManager : MonoBehaviour
         _missileReadyText.gameObject.SetActive(false);
     }
 
-
     public void DisplayAmmoText()
     {
         _ammoCountText.gameObject.SetActive(true);
@@ -149,9 +148,6 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         _playerMessageText.gameObject.SetActive(false);
     }
-
-
-
 }
 
 

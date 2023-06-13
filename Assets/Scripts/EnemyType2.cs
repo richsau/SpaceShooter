@@ -28,8 +28,6 @@ public class EnemyType2 : MonoBehaviour
     private bool _shieldUsed = false;
     private GameObject _targetPowerup;
 
-
-
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -205,7 +203,6 @@ public class EnemyType2 : MonoBehaviour
         yield return new WaitForSeconds(1);
         _enemySpeed /= 2;
     }
-
 
     private void ActivateShield()
     {

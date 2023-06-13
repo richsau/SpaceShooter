@@ -25,6 +25,7 @@ public class SpawnManager : MonoBehaviour
     private int _enemiesSpawned = 0;
     private int _enemiesDestroyed = 0;
     private bool _bossSpawned = false;
+    private GameObject _boss;
     private enum _powerUpTypes
     {
         Triple,
@@ -35,8 +36,6 @@ public class SpawnManager : MonoBehaviour
         GoSlow,
         Missile
     }
-
-
 
     void Start()
     {
@@ -62,10 +61,6 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnEnemy()
     {
-        //yield return new WaitForSeconds(1.0f);
-        //SpawnNewEnemyType2();
-        //_okToSpawn = true;
-        //_gameManager.NewLevel();
         while (_okToSpawn == true)
         {
             int level;
@@ -78,6 +73,19 @@ public class SpawnManager : MonoBehaviour
                 {
                     SpawnBoss();
                     _bossSpawned = true;
+                } 
+                else
+                {
+                    if (!_boss) // boss has been destroyed
+                    {
+                        _bossSpawned = false;
+                        _okToSpawn = false;
+                        _bossSpawned = false;
+                        _gameManager.NewLevel();
+                        _enemiesSpawned = 0;
+                        _enemiesDestroyed = 0;
+                        _okToSpawn = true;
+                    }
                 }
             } 
             else if (_enemiesSpawned < (level * 5) && (level > 0))
@@ -194,8 +202,7 @@ public class SpawnManager : MonoBehaviour
         Vector3 enemySpawnLocation = new Vector3(randomX, 7.5f, 0);
         GameObject newEnemy = Instantiate(_bossPrefab, enemySpawnLocation, Quaternion.identity);
         newEnemy.transform.parent = _enemyContainer.transform;
-        _enemyBucket.Add(newEnemy);
-        _enemiesSpawned++;
+        _boss = newEnemy;
     }
 
 

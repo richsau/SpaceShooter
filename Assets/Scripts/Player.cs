@@ -167,7 +167,6 @@ public class Player : MonoBehaviour
         _audioSource.Play();
     }
 
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "EnemyLaser" && !_gameManager.IsSuperPlayer())
@@ -194,7 +193,7 @@ public class Player : MonoBehaviour
             _uiManager.DisplayGameOver();
         }
     }
-    
+
     public void Damage()
     {
         _cameraShake.StartCameraShake();
@@ -295,7 +294,6 @@ public class Player : MonoBehaviour
         
     }
 
-
     public void RefillAmmo()
     {
         _ammoCount += 15;
@@ -349,7 +347,6 @@ public class Player : MonoBehaviour
         }
     }
 
-
     IEnumerator TripleShotCoolDown()
     {
         yield return new WaitForSeconds(5f);
@@ -389,7 +386,6 @@ public class Player : MonoBehaviour
             targetPowerup.ZoomToPlayer();
         }
     }
-
 
     private void ActivateSpeed()
     {

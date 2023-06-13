@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
     private int _level = 0;
     private UIManager _uiManager;
     private bool _isSuperPlayer = false;
-    //private bool _isMegaLaserActive = false;
-
 
     public void Start()
     {
@@ -116,15 +114,9 @@ public void QuitApplication()
         return _isSuperPlayer;
     }
 
-    //public bool IsMegaLaserActive()
-    //{
-    //    return _isMegaLaserActive;
-    //}
-
     private void SetLevel(int level)
     {
         _level = level;
         _uiManager.UpdateLevel(_level);
     }
-
 }
