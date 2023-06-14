@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyMine : MonoBehaviour
@@ -15,7 +14,7 @@ public class EnemyMine : MonoBehaviour
         Color _colorDim = new Color(196, 14, 219);
         Color _colorBright = new Color(147, 12, 164);
         Material _material = GetComponent<Renderer>().material;
-   
+
         while (true)
         {
             var ratio = Mathf.Abs(Mathf.Sin(Time.time * 4f));

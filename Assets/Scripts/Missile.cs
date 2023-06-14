@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Missile : MonoBehaviour
 {
-    private float _speed = 8.0f;
     private GameObject _target = null;
     private SpawnManager _spawnManager;
+    private float _speed = 8.0f;
 
     private void Start()
     {
@@ -30,7 +28,7 @@ public class Missile : MonoBehaviour
         if (_target)
         {
             FaceTarget();
-        } 
+        }
         else
         {
             _target = _spawnManager.FindMissileTarget(this.gameObject);

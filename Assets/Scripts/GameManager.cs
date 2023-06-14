@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
-{ 
-    private bool _isGameOver = false;
-    [SerializeField]
-    private int _level = 0;
+{
     private UIManager _uiManager;
     private bool _isSuperPlayer = false;
+    private bool _isGameOver = false;
+    private int _level = 0;
 
     public void Start()
     {
@@ -20,12 +17,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetGameOver(bool isGameOver)
-    {
-        _isGameOver = isGameOver;
-    }
-
-    // Update is called once per frame
     void Update()
     {
         int goTOLevel = 0;
@@ -46,7 +37,7 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             goTOLevel = 2;
-        } 
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             goTOLevel = 3;
@@ -74,9 +65,9 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log("Turning ON SuperPlayer");
                 _isSuperPlayer = true;
-            }      
+            }
         }
-        
+
         if (goTOLevel != 0)
         {
             Debug.Log("Switching to level: " + goTOLevel);
@@ -85,13 +76,19 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-public void QuitApplication()
+    public void QuitApplication()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
     }
+
+    public void SetGameOver(bool isGameOver)
+    {
+        _isGameOver = isGameOver;
+    }
+
 
     private void OnApplicationQuit()
     {

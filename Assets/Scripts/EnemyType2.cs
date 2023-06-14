@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyType2 : MonoBehaviour
@@ -14,19 +13,19 @@ public class EnemyType2 : MonoBehaviour
     private GameObject _enemyLaserTargetPlayerPrefab;
     [SerializeField]
     private GameObject _enemyLaserTargetPowerupPrefab;
-    private float _enemySpeed = 3.0f;
+    private GameObject _targetPowerup;
     private Player _player;
     private AudioSource _audioSource;
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
+    private Vector3 _fireDestination;
     private bool _isVisible = false;
     private bool _isDestroyed = false;
     private int _currentXDirection = 0;
     private float _maxX = 9.7f;
     private float _minX = -9.7f;
-    private Vector3 _fireDestination;
     private bool _shieldUsed = false;
-    private GameObject _targetPowerup;
+    private float _enemySpeed = 3.0f;
 
     private void Start()
     {
@@ -57,7 +56,6 @@ public class EnemyType2 : MonoBehaviour
         StartCoroutine(FireLaser());
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_player)
@@ -70,12 +68,12 @@ public class EnemyType2 : MonoBehaviour
             {
                 transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
             }
-        } 
+        }
         else
         {
             transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
         }
-        
+
         if (transform.position.x > _maxX)
         {
             _currentXDirection = -1;
@@ -138,6 +136,69 @@ public class EnemyType2 : MonoBehaviour
         }
     }
 
+    private void ActivateShield()
+    {
+        if (!_shieldUsed)
+        {
+            _shieldUsed = true;
+            _shieldVisual.SetActive(true);
+        }
+    }
+
+    public void DestroyEnemy()
+    {
+        if (!_shieldVisual.activeSelf)
+        {
+            if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
+            {
+                _spawnManager.RemoveEnemyFromBucket(this.gameObject);
+                _isDestroyed = true;
+                _spawnManager.UpdateEnimiesDestroyedCount();
+                GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+                _audioSource.Play();
+                _enemySpeed = 0;
+                Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
+                Destroy(this.gameObject);
+            }
+        }
+        else
+        {
+            GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            _audioSource.Play();
+            _shieldVisual.SetActive(false);
+        }
+    }
+
+    // ChangeDirections
+    // There's a 2 in 3 chance that the current direction 
+    // will change every 1 to 3 seconds.
+    IEnumerator ChangeDirections()
+    {
+        while (true)
+        {
+            _currentXDirection = Random.Range(-1, 2);
+            yield return new WaitForSeconds(Random.Range(1, 4));
+        }
+    }
+
+    IEnumerator ShieldManager()
+    {
+        while (true)
+        {
+            if (Random.Range(0, 100) < 10)
+            {
+                ActivateShield();
+            }
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    IEnumerator SpeedBurst()
+    {
+        _enemySpeed *= 2;
+        yield return new WaitForSeconds(1);
+        _enemySpeed /= 2;
+    }
     IEnumerator FireLaser()
     {
         while (true)
@@ -170,70 +231,6 @@ public class EnemyType2 : MonoBehaviour
             {
                 Instantiate(_enemyMinePrefab, transform.position, Quaternion.identity);
             }
-        }
-    }
-
-    // ChangeDirections
-    // There's a 2 in 3 chance that the current direction 
-    // will change every 1 to 3 seconds.
-    IEnumerator ChangeDirections()
-    {
-        while (true)
-        {
-            _currentXDirection = Random.Range(-1, 2);
-            yield return new WaitForSeconds(Random.Range(1, 4));
-        }
-    }
-
-    IEnumerator ShieldManager()
-    {
-        while (true)
-        {
-            if(Random.Range(0, 100) < 10)
-            {
-                ActivateShield();
-            }
-            yield return new WaitForSeconds(1);
-        }
-    }
-
-    IEnumerator SpeedBurst()
-    {
-        _enemySpeed *= 2;
-        yield return new WaitForSeconds(1);
-        _enemySpeed /= 2;
-    }
-
-    private void ActivateShield()
-    {
-        if (!_shieldUsed)
-        {
-            _shieldUsed = true;
-            _shieldVisual.SetActive(true);
-        }
-    }
-
-    public void DestroyEnemy()
-    {
-        if (!_shieldVisual.activeSelf)
-        {
-            if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
-            {
-                _spawnManager.RemoveEnemyFromBucket(this.gameObject);
-                _isDestroyed = true;
-                _spawnManager.UpdateEnimiesDestroyedCount();
-                GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-                _audioSource.Play();
-                _enemySpeed = 0;
-                Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
-                Destroy(this.gameObject);
-            }
-        }
-        else
-        {
-            GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-            _audioSource.Play();
-            _shieldVisual.SetActive(false);
         }
     }
 }

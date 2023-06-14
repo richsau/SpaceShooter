@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Boss : MonoBehaviour
@@ -12,16 +11,14 @@ public class Boss : MonoBehaviour
     private GameObject _explosionPrefab;
     [SerializeField]
     private GameObject _bigExplosionPrefab;
+    private AudioSource _audioSource;
+    private CameraShake _cameraShake;
     public float speed = 0.5f;
     public float reachDistance = 1.0f;
-    //public int currentPoint = 0;
     private int _movIndex = 0;
     private int _numGuns = 10;
     private bool _isDestroyed = false;
-    private AudioSource _audioSource;
-    private CameraShake _cameraShake;
 
-    // Start is called before the first frame update
     void Start()
     {
         path[0] = GameObject.FindWithTag("Mov0").transform;
@@ -43,7 +40,6 @@ public class Boss : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         float distance = Vector3.Distance(path[_movIndex].position, transform.position);

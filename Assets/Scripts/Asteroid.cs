@@ -1,20 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
     [SerializeField]
     private GameObject _explosionPrefab;
-    private float _rotateSpeed = 20.0f;
-    private float _speed = 10.0f;
     private Player _player;
     private SpawnManager _spawnManager;
     private GameManager _gameManager;
     private int _rotateDirection;
     private bool _isVisible = false;
+    private float _rotateSpeed = 20.0f;
+    private float _speed = 10.0f;
 
-    // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -37,7 +34,6 @@ public class Asteroid : MonoBehaviour
         _isVisible = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Rotate(new Vector3(0, 0, _rotateDirection) * _rotateSpeed * Time.deltaTime);
@@ -46,7 +42,7 @@ public class Asteroid : MonoBehaviour
 
         transform.Translate(asteroidMovement);
 
-        if(transform.position.y < 7.1)
+        if (transform.position.y < 7.1)
         {
             _isVisible = true;
         }
@@ -63,7 +59,7 @@ public class Asteroid : MonoBehaviour
         {
             if (_player != null)
             {
-                _player.DamageToKill(); 
+                _player.DamageToKill();
             }
             DestroyAsteroid();
         }

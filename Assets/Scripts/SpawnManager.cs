@@ -18,14 +18,15 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerupPrefabs;
     List<GameObject> _powerupBucket = new List<GameObject>();
     List<GameObject> _enemyBucket = new List<GameObject>();
+    private GameManager _gameManager;
+    private GameObject _boss;
     private int _powerUpRoll;
     private int _powerUpType;
     private bool _okToSpawn = false;
-    private GameManager _gameManager;
     private int _enemiesSpawned = 0;
     private int _enemiesDestroyed = 0;
     private bool _bossSpawned = false;
-    private GameObject _boss;
+
     private enum _powerUpTypes
     {
         Triple,
@@ -57,123 +58,6 @@ public class SpawnManager : MonoBehaviour
     public void StopSpawning()
     {
         _okToSpawn = false;
-    }
-
-    IEnumerator SpawnEnemy()
-    {
-        while (_okToSpawn == true)
-        {
-            int level;
-
-            level = _gameManager.GetLevel();
-
-            if ((level % 5 == 0) && (level > 0))
-            {
-                if (!_bossSpawned)
-                {
-                    SpawnBoss();
-                    _bossSpawned = true;
-                } 
-                else
-                {
-                    if (!_boss) // boss has been destroyed
-                    {
-                        _bossSpawned = false;
-                        _okToSpawn = false;
-                        _bossSpawned = false;
-                        _gameManager.NewLevel();
-                        _enemiesSpawned = 0;
-                        _enemiesDestroyed = 0;
-                        _okToSpawn = true;
-                    }
-                }
-            } 
-            else if (_enemiesSpawned < (level * 5) && (level > 0))
-            {
-                if (Random.Range(0, 100) < 5)
-                {
-                    SpawnNewEnemyType2();
-                }
-                else
-                {
-                    SpawnNewEnemy();
-                }
-            }
-            else
-            {
-                if (_enemiesDestroyed == _enemiesSpawned)
-                {
-                    _okToSpawn = false;
-                    _bossSpawned = false;
-                    _gameManager.NewLevel();
-                    _enemiesSpawned = 0;
-                    _enemiesDestroyed = 0;
-                    _okToSpawn = true;
-                }
-            }
-            yield return new WaitForSeconds(5f);
-        }
-    }
-
-    IEnumerator SpwanPowerUp()
-    {
-        while (_okToSpawn == true)
-        {
-            _powerUpRoll = Random.Range(0, 100);
-            float randomX = Random.Range(-8.5f, 8.5f);
-            Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
-            if (_powerUpRoll < 20) // 20%
-            {
-                _powerUpType = (int)_powerUpTypes.Triple;
-            } 
-            else if (_powerUpRoll > 19 && _powerUpRoll < 50) // 30%
-            {
-                _powerUpType = (int)_powerUpTypes.Shield;
-            }
-            else if (_powerUpRoll > 49 && _powerUpRoll < 80) // 30%
-            {
-                _powerUpType = (int)_powerUpTypes.Ammo;
-            }
-            else if (_powerUpRoll > 79 && _powerUpRoll < 85) // 5%
-            {
-                _powerUpType = (int)_powerUpTypes.Health;
-            }
-            else if (_powerUpRoll > 84 && _powerUpRoll < 90) // 5%
-            {
-                _powerUpType = (int)_powerUpTypes.Missile;
-            }
-            else if (_powerUpRoll > 89 && _powerUpRoll < 95) // 5%
-            {
-                _powerUpType = (int)_powerUpTypes.Mega;
-            }
-            else if (_powerUpRoll > 94) // 5%
-            {
-                _powerUpType = (int)_powerUpTypes.GoSlow;
-            }
-            else
-            {
-                Debug.LogError("Unexpected _powerUpRoll in SpawnManager: " + _powerUpRoll);
-            }
-            
-            if (_gameManager.GetLevel() > 0)
-            {
-                GameObject NewPowerup = Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
-                _powerupBucket.Add(NewPowerup);
-            }
-            yield return new WaitForSeconds(Random.Range(5, 11));
-        }
-    }
-
-    IEnumerator SpawnAsteroid()
-    {
-        yield return new WaitForSeconds(Random.Range(20, 60));
-        while (_okToSpawn == true && _gameManager.GetLevel() > 0)
-        {
-            float randomX = Random.Range(-8.5f, 8.5f);
-            Vector3 asteroidSpawnLocation = new Vector3(randomX, 7.5f, 0);
-            Instantiate(_asteroidPrefab, asteroidSpawnLocation, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(20, 60));
-        }
     }
 
     private void SpawnNewEnemy()
@@ -257,5 +141,123 @@ public class SpawnManager : MonoBehaviour
         }
         return null;
     }
+    IEnumerator SpawnEnemy()
+    {
+        while (_okToSpawn == true)
+        {
+            int level;
+
+            level = _gameManager.GetLevel();
+
+            if ((level % 5 == 0) && (level > 0))
+            {
+                if (!_bossSpawned)
+                {
+                    SpawnBoss();
+                    _bossSpawned = true;
+                }
+                else
+                {
+                    if (!_boss) // boss has been destroyed
+                    {
+                        _bossSpawned = false;
+                        _okToSpawn = false;
+                        _bossSpawned = false;
+                        _gameManager.NewLevel();
+                        _enemiesSpawned = 0;
+                        _enemiesDestroyed = 0;
+                        _okToSpawn = true;
+                    }
+                }
+            }
+            else if (_enemiesSpawned < (level * 5) && (level > 0))
+            {
+                if (Random.Range(0, 100) < 5)
+                {
+                    SpawnNewEnemyType2();
+                }
+                else
+                {
+                    SpawnNewEnemy();
+                }
+            }
+            else
+            {
+                if (_enemiesDestroyed == _enemiesSpawned)
+                {
+                    _okToSpawn = false;
+                    _bossSpawned = false;
+                    _gameManager.NewLevel();
+                    _enemiesSpawned = 0;
+                    _enemiesDestroyed = 0;
+                    _okToSpawn = true;
+                }
+            }
+            yield return new WaitForSeconds(5f);
+        }
+    }
+
+    IEnumerator SpwanPowerUp()
+    {
+        while (_okToSpawn == true)
+        {
+            _powerUpRoll = Random.Range(0, 100);
+            float randomX = Random.Range(-8.5f, 8.5f);
+            Vector3 powerUpSpawnLocation = new Vector3(randomX, 7.5f, 0);
+            if (_powerUpRoll < 20) // 20%
+            {
+                _powerUpType = (int)_powerUpTypes.Triple;
+            }
+            else if (_powerUpRoll > 19 && _powerUpRoll < 50) // 30%
+            {
+                _powerUpType = (int)_powerUpTypes.Shield;
+            }
+            else if (_powerUpRoll > 49 && _powerUpRoll < 80) // 30%
+            {
+                _powerUpType = (int)_powerUpTypes.Ammo;
+            }
+            else if (_powerUpRoll > 79 && _powerUpRoll < 85) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.Health;
+            }
+            else if (_powerUpRoll > 84 && _powerUpRoll < 90) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.Missile;
+            }
+            else if (_powerUpRoll > 89 && _powerUpRoll < 95) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.Mega;
+            }
+            else if (_powerUpRoll > 94) // 5%
+            {
+                _powerUpType = (int)_powerUpTypes.GoSlow;
+            }
+            else
+            {
+                Debug.LogError("Unexpected _powerUpRoll in SpawnManager: " + _powerUpRoll);
+            }
+
+            if (_gameManager.GetLevel() > 0)
+            {
+                GameObject NewPowerup = Instantiate(_powerupPrefabs[_powerUpType], powerUpSpawnLocation, Quaternion.identity);
+                _powerupBucket.Add(NewPowerup);
+            }
+            yield return new WaitForSeconds(Random.Range(5, 11));
+        }
+    }
+
+    IEnumerator SpawnAsteroid()
+    {
+        yield return new WaitForSeconds(Random.Range(20, 60));
+        while (_okToSpawn == true && _gameManager.GetLevel() > 0)
+        {
+            float randomX = Random.Range(-8.5f, 8.5f);
+            Vector3 asteroidSpawnLocation = new Vector3(randomX, 7.5f, 0);
+            Instantiate(_asteroidPrefab, asteroidSpawnLocation, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(20, 60));
+        }
+    }
+
+
 }
 

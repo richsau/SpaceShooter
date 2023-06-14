@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyLaserTypePlayer : MonoBehaviour
 {
-    private float _speed = 8.0f;
     private Player _player;
- 
+    private float _speed = 8.0f;
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -50,5 +48,4 @@ public class EnemyLaserTypePlayer : MonoBehaviour
         Quaternion rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), offset);
         transform.rotation = rotation;
     }
-
 }

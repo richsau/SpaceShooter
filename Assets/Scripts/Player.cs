@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -28,30 +27,29 @@ public class Player : MonoBehaviour
     private GameObject _megaLaserPrefab;
     [SerializeField]
     private GameObject _missilePrefab;
-    private float _speed = 3.5f;
-    private float _speedMultiplier = 2f;
-    private float _cooldownTime = 0.15f; 
-    private float _canFireAgain = -1f;
-    private int _lives = 3;
     private SpawnManager _spawnManager;
     private GameManager _gameManager;
+    private UIManager _uiManager;
+    private AudioSource _audioSource;
+    private CameraShake _cameraShake;
+    private float _speed = 3.5f;
+    private float _speedMultiplier = 2f;
+    private float _cooldownTime = 0.15f;
+    private float _canFireAgain = -1f;
+    private int _lives = 3;
     private bool _isTripleShotActive = false;
     private bool _isMegaLaserActive = false;
     private bool _isSpeedActive = false;
     private bool _isSlowActitve = false;
     private int _shieldLevel = 0;
     private int _score = 0;
-    private UIManager _uiManager;
     private bool _leftWingOnFire = false;
-    private AudioSource _audioSource;
     private int _speedFuel = 0;
     private int _ammoCount = 15;
-    private CameraShake _cameraShake;
     private int _maxAmmo = 20;
     private bool _playerIsLucky;
     private bool _missileAvailable = false;
 
-    // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, -3.9f, 0);
@@ -65,11 +63,7 @@ public class Player : MonoBehaviour
         if (_audioSource == null)
         {
             Debug.LogError("Could not find AudioSource in Player.");
-        } else
-        {
-            //_audioSource.clip = _laserAudioClip;
         }
-
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
@@ -80,7 +74,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Could not find GameManager in Player.");
         }
-        _cameraShake =GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
         if (_cameraShake == null)
         {
             Debug.LogError("Could not find CameraShake in Player.");
@@ -91,7 +85,6 @@ public class Player : MonoBehaviour
         StartCoroutine(PlayerLuckCheck());
     }
 
-    // Update is called once per frame
     void Update()
     {
         MovePlayer();
@@ -115,7 +108,16 @@ public class Player : MonoBehaviour
             }
         }
     }
-
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "EnemyLaser" && !_gameManager.IsSuperPlayer())
+        {
+            Destroy(other.gameObject);
+            _audioSource.clip = _explosionAudioClip;
+            _audioSource.Play();
+            Damage();
+        }
+    }
     void MovePlayer()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -123,7 +125,7 @@ public class Player : MonoBehaviour
         Vector3 playerMovement = new Vector3(horizontalInput, verticalInput, 0) * _speed * Time.deltaTime;
 
         transform.Translate(playerMovement);
-  
+
         // restrict x position
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, -9.2f, 9.2f), transform.position.y, 0);
 
@@ -139,7 +141,8 @@ public class Player : MonoBehaviour
         {
             Instantiate(_megaLaserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             _audioSource.Play();
-        } else
+        }
+        else
         {
             if (_ammoCount > 0)
             {
@@ -167,16 +170,7 @@ public class Player : MonoBehaviour
         _audioSource.Play();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "EnemyLaser" && !_gameManager.IsSuperPlayer())
-        {
-            Destroy(other.gameObject);
-            _audioSource.clip = _explosionAudioClip;
-            _audioSource.Play();
-            Damage();
-        }
-    }
+
 
     public void DamageToKill()
     {
@@ -219,7 +213,7 @@ public class Player : MonoBehaviour
             }
             return; // exit out of damage method
         }
-        
+
         _lives--;
         _uiManager.UpdateLives(_lives);
 
@@ -268,7 +262,8 @@ public class Player : MonoBehaviour
                 {
                     _leftWingOnFire = false;
                     _leftWingFire.SetActive(false);
-                } else
+                }
+                else
                 {
                     _rightWingFire.SetActive(false);
                 }
@@ -277,7 +272,8 @@ public class Player : MonoBehaviour
                 if (_leftWingOnFire)
                 {
                     _leftWingFire.SetActive(false);
-                } else
+                }
+                else
                 {
                     _rightWingFire.SetActive(false);
                 }
@@ -291,7 +287,7 @@ public class Player : MonoBehaviour
             _lives++;
             _uiManager.UpdateLives(_lives);
         }
-        
+
     }
 
     public void RefillAmmo()
@@ -319,59 +315,6 @@ public class Player : MonoBehaviour
         {
             _isMegaLaserActive = true;
             StartCoroutine(MegaLaserCoolDown());
-        }
-    }
-
-    IEnumerator MissileReady()
-    {
-        while (_missileAvailable)
-        {
-            _uiManager.BlinkMissileReadyText();
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-    IEnumerator LowAmmoCheck()
-    {
-        while (true)
-        {
-            if (_ammoCount < 6)
-            {
-                _uiManager.BlinkAmmoText();
-            }
-            else
-            {
-                _uiManager.DisplayAmmoText();
-            }
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-    IEnumerator TripleShotCoolDown()
-    {
-        yield return new WaitForSeconds(5f);
-        _isTripleShotActive = false;
-    }
-
-    IEnumerator MegaLaserCoolDown()
-    { 
-        yield return new WaitForSeconds(5f); 
-        _isMegaLaserActive = false;
-    }
-
-    IEnumerator PlayerLuckCheck()
-    {
-        while (true)
-        {
-            if (Random.Range(0, 100) < 5)  
-            {
-                _playerIsLucky = true;
-            }
-            else
-            {
-                _playerIsLucky = false;
-            }
-            yield return new WaitForSeconds(10f);
         }
     }
 
@@ -415,6 +358,75 @@ public class Player : MonoBehaviour
         }
 
     }
+    public void ActivateShield()
+    {
+        _shieldVisual.SetActive(true);
+        _shieldLevel = 3;
+        _shieldVisual.transform.localScale = new Vector3(2, 2, 1);
+    }
+
+    public void AddToScore(int amountToAdd)
+    {
+        _score += amountToAdd;
+        _uiManager.UpdateScore(_score);
+    }
+
+    public bool IsPlayerLucky()
+    {
+        return _playerIsLucky;
+    }
+    IEnumerator MissileReady()
+    {
+        while (_missileAvailable)
+        {
+            _uiManager.BlinkMissileReadyText();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    IEnumerator LowAmmoCheck()
+    {
+        while (true)
+        {
+            if (_ammoCount < 6)
+            {
+                _uiManager.BlinkAmmoText();
+            }
+            else
+            {
+                _uiManager.DisplayAmmoText();
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    IEnumerator TripleShotCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _isTripleShotActive = false;
+    }
+
+    IEnumerator MegaLaserCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _isMegaLaserActive = false;
+    }
+
+    IEnumerator PlayerLuckCheck()
+    {
+        while (true)
+        {
+            if (Random.Range(0, 100) < 5)
+            {
+                _playerIsLucky = true;
+            }
+            else
+            {
+                _playerIsLucky = false;
+            }
+            yield return new WaitForSeconds(10f);
+        }
+    }
 
     private IEnumerator SlowCoolDown()
     {
@@ -437,23 +449,6 @@ public class Player : MonoBehaviour
         _thrusterVisual.transform.localScale = new Vector3(0.5f, 1.0f, 1.0f); // shrink the thruster visual
     }
 
-    public void ActivateShield()
-    {
-         _shieldVisual.SetActive(true);
-         _shieldLevel = 3;
-         _shieldVisual.transform.localScale = new Vector3(2, 2, 1);
-    }
-
-    public void AddToScore(int amountToAdd)
-    {
-        _score += amountToAdd;
-        _uiManager.UpdateScore(_score);
-    }
-
-    public bool IsPlayerLucky()
-    {
-        return _playerIsLucky;
-    }
     IEnumerator SpeedFuelFillUp()
     {
         while (true)

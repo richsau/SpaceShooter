@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BossGun : MonoBehaviour
@@ -10,10 +9,9 @@ public class BossGun : MonoBehaviour
     private GameObject _enemyLaserTargetPlayerPrefab;
     private Player _player;
     private Boss _boss;
-    private bool _isDestroyed = false;
     private AudioSource _audioSource;
+    private bool _isDestroyed = false;
 
-    // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -36,8 +34,6 @@ public class BossGun : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-       
-
         if ((other.tag == "Laser") || (other.tag == "Missile"))
         {
             Destroy(other.gameObject);

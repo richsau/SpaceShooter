@@ -1,9 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
-{   
+{
     [SerializeField]
     private GameObject _enemyLaserPrefab;
     private float _enemySpeed = 2.0f;
@@ -17,7 +16,7 @@ public class Enemy : MonoBehaviour
     private int _currentXDirection = 0;
     private float _maxX = 9.7f;
     private float _minX = -9.7f;
-    
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -48,24 +47,22 @@ public class Enemy : MonoBehaviour
         _isVisible = false;
         StartCoroutine(FireLaser());
         StartCoroutine(ChangeDirections());
-       
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Translate(new Vector3(_currentXDirection, -1, 0) * _enemySpeed * Time.deltaTime);
-        if (transform.position.x > _maxX) 
+        if (transform.position.x > _maxX)
         {
             _currentXDirection = -1;
-        } 
+        }
 
-        if (transform.position.x < _minX) 
+        if (transform.position.x < _minX)
         {
             _currentXDirection = 1;
         }
 
-        if (transform.position.y < 7.44) 
+        if (transform.position.y < 7.44)
         {
             _isVisible = true;
         }
@@ -101,6 +98,20 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void DestroyEnemy()
+    {
+        if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
+        {
+            _spawnManager.RemoveEnemyFromBucket(this.gameObject);
+            _isDestroyed = true;
+            _spawnManager.UpdateEnimiesDestroyedCount();
+            _enemyDeathAnim.SetTrigger("OnEnemyDeath");
+            _audioSource.Play();
+            _enemySpeed = 0;
+            Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
+            Destroy(this.gameObject, 2.8f);
+        }
+    }
     IEnumerator FireLaser()
     {
         while (true)
@@ -122,21 +133,6 @@ public class Enemy : MonoBehaviour
         {
             _currentXDirection = Random.Range(-1, 2);
             yield return new WaitForSeconds(Random.Range(1, 4));
-        }
-    }
-
-    public void DestroyEnemy()
-    {
-        if (!_isDestroyed) // rare chance that object is destroyed while being destroyed
-        {
-            _spawnManager.RemoveEnemyFromBucket(this.gameObject);
-            _isDestroyed = true;
-            _spawnManager.UpdateEnimiesDestroyedCount();
-            _enemyDeathAnim.SetTrigger("OnEnemyDeath");
-            _audioSource.Play();
-            _enemySpeed = 0;
-            Destroy(GetComponent<Collider2D>()); // prevent further collision while being destroyed
-            Destroy(this.gameObject, 2.8f);
         }
     }
 }

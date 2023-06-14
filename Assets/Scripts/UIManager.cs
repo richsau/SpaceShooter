@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,9 +25,7 @@ public class UIManager : MonoBehaviour
     private Slider _speedFuel;
     private GameManager _gameManager;
     private SpawnManager _spawnManager;
-    
 
-    // Start is called before the first frame update
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -66,7 +63,8 @@ public class UIManager : MonoBehaviour
         if (_ammoCountText.IsActive())
         {
             _ammoCountText.gameObject.SetActive(false);
-        } else
+        }
+        else
         {
             _ammoCountText.gameObject.SetActive(true);
         }

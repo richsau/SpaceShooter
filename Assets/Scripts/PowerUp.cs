@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PowerUp : MonoBehaviour
@@ -17,7 +16,7 @@ public class PowerUp : MonoBehaviour
     private SpawnManager _spawnManager;
     private Player _player;
     private bool _zoomToPlayer = false;
- 
+
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
@@ -113,14 +112,14 @@ public class PowerUp : MonoBehaviour
         }
     }
 
+    public void ZoomToPlayer()
+    {
+        _zoomToPlayer = true;
+    }
+
     IEnumerator DestroyCoolDown()
     {
         yield return new WaitForSeconds(2f);
         Destroy(this.gameObject);
-    }
-
-    public void ZoomToPlayer()
-    {
-        _zoomToPlayer = true;
     }
 }
